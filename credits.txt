@@ -3,3 +3,5 @@ Credits to:
 - TwilightSage for the current memes.py and emoji.py which will become original soon
 - Noirscape for the basic template of a dynamic cog loading bot
 - ReSwitched for the common.py taken from Robocop-ng
+- Nintendo-Homebrew for some Kurisu code
+
