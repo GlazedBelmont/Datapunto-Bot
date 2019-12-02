@@ -84,14 +84,6 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
-@bot.command(pass_context=True)
-async def restart(self, ctx):
-    BotAdmin = ctx.guild.get_role(617476156148547619)
-    if BotAdmin in ctx.author.roles:
-        await ctx.send("*Restarting...*")
-        await self.bot.close()
-
-
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
         super().__init__(command_prefix=command_prefix, description=description)
