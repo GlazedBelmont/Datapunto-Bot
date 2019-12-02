@@ -4,5 +4,6 @@ config.yml
 cogs/3music.py
 cogs/mod.py
 cogs/samplecog.py
+discord.log
 
 

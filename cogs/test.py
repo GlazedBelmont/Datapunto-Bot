@@ -132,6 +132,21 @@ class Test(commands.Cog):
         embed.description = "This is where the serial is located. Use this number to check if you are patched."
         embed.set_image(url="https://i.imgur.com/03NfeFN.png")
         await ctx.send(embed=embed)
-        
+
+    @commands.command()
+    async def attach(self, ctx):
+        if ctx.message.attachment:
+            await ctx.send("That's not attached, right?")
+        else:
+            await ctx.send("attached or you're just bad at python, glazed")
+
+    @commands.command()
+    async def crash(self, ctx):
+        if ctx.message.attachments:
+            content += f.filename().endswith('.dmp')
+            await ctx.channel.send("it works")
+        else:
+            await ctx.channel.send("shut")
+
 def setup(bot):
     bot.add_cog(Test(bot))

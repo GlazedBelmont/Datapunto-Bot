@@ -84,6 +84,10 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
+async def close(self):
+    print('Closing...')
+        await self.bot.close()
+
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
         super().__init__(command_prefix=command_prefix, description=description)
@@ -105,6 +109,12 @@ class Datapunto(commands.Bot):
 
 pic_ext = ['.jpg','.png','.jpeg']
 
+
+async def on_error(self, event_method, *args, **kwargs):
+    await self.channels['bot-err'].send(f'Error in {event_method}:')
+    msg = format_exc()
+    for chunk in [msg[i:i + 1800] for i in range(0, len(msg), 1800)]:
+       await self.channels['bot-err'].send(f'```\n{chunk}\n```')
 
 @bot.event
 async def on_ready():
