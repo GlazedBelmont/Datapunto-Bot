@@ -4,6 +4,7 @@ import yaml
 import discord
 from discord.ext import commands
 import os
+from datetime import datetime
 from discord import ChannelType
 '''Bot framework that can dynamically load and unload cogs.'''
 
@@ -94,7 +95,9 @@ async def restart(self, ctx):
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
         super().__init__(command_prefix=command_prefix, description=description)
-
+        
+        self.startup = datetime.now()
+        
         self.channels = {
             'wiiu-assistance-roleplay': None,
             '3ds-assistance-roleplay': None,
