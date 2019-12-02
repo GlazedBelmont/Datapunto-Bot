@@ -1,3 +1,8 @@
 secure.yml
 config.yml
 **.pyc
+cogs/3music.py
+cogs/mod.py
+cogs/samplecog.py
+
+

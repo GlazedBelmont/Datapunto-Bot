@@ -1,5 +1,6 @@
 import asyncio
 import discord
+from subprocess import call
 from discord.ext import commands
 
 class git(commands.Cog):
@@ -71,7 +72,13 @@ class git(commands.Cog):
         await tmp.delete()
         await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/PKSM/out/PKSM_Latest.zip'))
         
-        
+    @commands.command()
+    async def pull(self, ctx):
+        await ctx.send("Pulling changes...")
+        call(['git', 'pull'])
+        await ctx.send("👋 Restarting bot!")
+        await self.bot.close() 
+
         
         
         
