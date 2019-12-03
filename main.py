@@ -113,7 +113,7 @@ class Datapunto(commands.Bot):
 
 pic_ext = ['.jpg','.png','.jpeg']
 
-@bot.command(pass_context=True)
+@bot.command()
 async def close(self):
     leave_message += "\n\nAh shit, here we go again\n"
     await self.channels['bot-test'].send(leave_message)
