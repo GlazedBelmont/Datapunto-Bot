@@ -5,6 +5,7 @@ import yaml
 import discord
 from discord.ext import commands
 import os
+from traceback import format_exception, format_exc
 from datetime import datetime
 from discord import ChannelType
 '''Bot framework that can dynamically load and unload cogs.'''
