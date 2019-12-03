@@ -1,5 +1,6 @@
 
 import logging
+import asyncio
 import yaml
 import discord
 from discord.ext import commands
@@ -84,10 +85,11 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
-@bot.command(pass_context=True)
+@bot.command(aliases=['reboot', 'restart'], pass_context=True)
 async def close(self, ctx):
-    await ctx.send("Closing... ")
-    await self.bot.close()
+    ctx.channel.send("Closing... ")
+    asyncio.sleep(2)
+    await super().close()
 
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
