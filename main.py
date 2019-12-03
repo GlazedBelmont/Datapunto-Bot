@@ -101,6 +101,8 @@ class Datapunto(commands.Bot):
         self.channels = {
             'wiiu-assistance-roleplay': None,
             '3ds-assistance-roleplay': None,
+            'bot-err': None,
+            'bot-test': None,
         }
 
 
