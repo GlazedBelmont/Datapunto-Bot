@@ -86,9 +86,9 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
-@bot.command(pass_context=True)
-async def close(self, ctx):
-    await ctx.send("Closing...")
+@bot.command()
+async def close(self):
+    await self.channels['bot-test'].send(f'We leaveing, bois')
     await asyncio.sleep(2)
     await super().close()
 
