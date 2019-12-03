@@ -85,7 +85,7 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
-@bot.command(aliases=['reboot', 'restart'], pass_context=True)
+@bot.command(aliases=['reboot', 'restart'])
 async def close(self):
     print('Closing...')
     asyncio.sleep(2)
