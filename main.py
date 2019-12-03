@@ -89,7 +89,7 @@ async def textchannels(ctx):
 async def close(self, ctx):
     await ctx.send("Closing...")
     await asyncio.sleep(2)
-    await self.bot.close()
+    await super().close()
 
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
