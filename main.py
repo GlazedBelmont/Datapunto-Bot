@@ -86,8 +86,8 @@ async def textchannels(ctx):
     await ctx.send("\n".join(channels))
 
 @bot.command()
-async def close(self):
-    print('Closing...')
+async def close(self, ctx):
+    await ctx.send("Closing...")
     asyncio.sleep(2)
     await self.bot.close()
 
