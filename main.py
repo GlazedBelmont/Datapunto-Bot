@@ -85,10 +85,10 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
-@bot.command()
+@bot.command(pass_context=True)
 async def close(self, ctx):
     await ctx.send("Closing...")
-    asyncio.sleep(2)
+    await asyncio.sleep(2)
     await self.bot.close()
 
 class Datapunto(commands.Bot):
