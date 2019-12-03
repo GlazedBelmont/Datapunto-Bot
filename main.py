@@ -88,8 +88,6 @@ async def textchannels(ctx):
 
 
 
-
-
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
         super().__init__(command_prefix=command_prefix, description=description)
@@ -113,11 +111,7 @@ class Datapunto(commands.Bot):
 
 pic_ext = ['.jpg','.png','.jpeg']
 
-@bot.command()
-async def close(self):
-    leave_message += "\n\nAh shit, here we go again\n"
-    await self.channels['bot-test'].send(leave_message)
-    await super().close()
+
 
 @bot.event
 async def on_ready():
