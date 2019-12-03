@@ -86,10 +86,6 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
-@bot.command(self, pass_context=True)
-async def close(ctx):
-    await ctx.send("Shutting down...")
-    await super().close()
 
 
 
@@ -116,6 +112,11 @@ class Datapunto(commands.Bot):
     bot.load_extension("jishaku")
 
 pic_ext = ['.jpg','.png','.jpeg']
+
+@bot.command(pass_context=True)
+async def close(self, ctx):
+    await ctx.send("Shutting down...")
+    await super().close()
 
 @bot.event
 async def on_ready():
