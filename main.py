@@ -88,8 +88,7 @@ async def textchannels(ctx):
 
 @bot.command(pass_context=True)
 async def close(ctx):
-    
-    await ctx.send("Shutting down..."))
+    await ctx.send("Shutting down...")
     await super().close()
 
 
