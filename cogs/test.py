@@ -3,7 +3,9 @@ import typing
 import datetime
 import time
 import re
+import pyqrcode
 
+from pyqrcode import QRCode
 from cogs.checks import is_trusted
 from discord.ext import commands
 
@@ -147,6 +149,14 @@ class Test(commands.Cog):
             await ctx.channel.send("it works")
         else:
             await ctx.channel.send("shut")
+
+    @commands.command()
+    async def qrcode(self, ctx):
+        link = "https://glazedbelmont.github.io/"
+        url = pyqrcode.create(link)
+        await url.svg("glazedhax.svg", scale = 8)
+        await ctx.channel.send("yeah")
+        await
 
 def setup(bot):
     bot.add_cog(Test(bot))

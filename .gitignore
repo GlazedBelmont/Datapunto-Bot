@@ -5,5 +5,8 @@ cogs/3music.py
 cogs/mod.py
 cogs/samplecog.py
 discord.log
-
-
+git_clone_PKSM_log.txt
+git_make_PKSM_log.txt
+git_rev-parse_PKSM_log.txt
+PKSM/
+cogs/test.py
