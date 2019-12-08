@@ -85,7 +85,7 @@ class git(commands.Cog):
     async def devkitarm(self, ctx, auto=False):
         tmp = await ctx.send('doing the shit...')
 
-        echo_devkitarm = await self.bot.async_call_shell("echo $DEVKITARM && source /etc/profile.d/devkit_env.sh")
+        echo_devkitarm = await self.bot.async_call_shell("echo $DEVKITARM && source /etc/profile.d/devkit-env.sh")
         with open("echo_devkitarm_log.txt", "a+",encoding="utf-8") as f:
             print(echo_devkitarm, sep="\n\n", file=f)
         await tmp.delete()
