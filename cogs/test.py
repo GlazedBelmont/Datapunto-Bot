@@ -154,11 +154,11 @@ class Test(commands.Cog):
     async def qrcode(self, ctx):
         link = "https://glazedbelmont.github.io/"
         url = pyqrcode.create(link)
-        url.svg("glazedhax.png", scale = 8)
+        url.svg("glazedhax.svg", scale = 8)
         channel = ctx.channel
-        file = discord.File("/home/glazed/DatapuntoBot/glazedhax.png", filename="glazedhax.png")
+        file = discord.File("/home/glazed/DatapuntoBot/glazedhax.svg", filename="glazedhax.svg")
         embed = discord.Embed()
-        embed.set_image(url="attachment://glazedhax.png")
+        embed.set_image(url="attachment://glazedhax.svg")
         await channel.send(file=file, embed=embed)
 
 def setup(bot):
