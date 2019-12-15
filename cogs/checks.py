@@ -11,7 +11,7 @@ def is_trusted(role):
             return await check_trusted(ctx)
     return commands.check(predicate)
 
-async def check_trusted(ctx):
+async def check_trusted():
     BotAdmin = ctx.guild.get_role(617476156148547619)
     if BotAdmin in ctx.author.roles:
         return True

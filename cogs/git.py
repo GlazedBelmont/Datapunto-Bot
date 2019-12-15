@@ -85,11 +85,24 @@ class git(commands.Cog):
     async def devkitarm(self, ctx, auto=False):
         tmp = await ctx.send('doing the shit...')
 
-        echo_devkitarm = await self.bot.async_call_shell("echo $PATH && which python3")
+        echo_devkitarm = await self.bot.async_call_shell("echo $DEVKITPRO")
         with open("echo_devkitarm_log.txt", "a+",encoding="utf-8") as f:
             print(echo_devkitarm, sep="\n\n", file=f)
         await tmp.delete()
         await ctx.channel.send(f"```peepee\n\n{echo_devkitarm}```")
+
+    @commands.guild_only()
+    @commands.command()
+    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
+    async def calltest(self, ctx, auto=False):
+        tmp = await ctx.send('doing the shit...')
+
+        calloutput = await call("echo" "$DEVKITPRO")
+        with open("calloutput.txt", "a+",encoding="utf-8") as f:
+            print(calloutput, sep="\n\n", file=f)
+        await tmp.delete()
+        await ctx.channel.send(f"{calloutput}")
+        
 
         
         
