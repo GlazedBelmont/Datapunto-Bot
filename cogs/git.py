@@ -71,6 +71,7 @@ class git(commands.Cog):
         
         await tmp.delete()
         await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/PKSM/out/PKSM_Latest.zip'))
+        await self.bot.async_call_shell(f"rm -rf PKSM")
         
     @commands.command()
     async def pull(self, ctx):
@@ -85,7 +86,7 @@ class git(commands.Cog):
     async def devkitarm(self, ctx, auto=False):
         tmp = await ctx.send('doing the shit...')
 
-        echo_devkitarm = await self.bot.async_call_shell("echo $DEVKITPRO")
+        echo_devkitarm = await self.bot.async_call_shell("echo $DEVKITARM")
         with open("echo_devkitarm_log.txt", "a+",encoding="utf-8") as f:
             print(echo_devkitarm, sep="\n\n", file=f)
         await tmp.delete()

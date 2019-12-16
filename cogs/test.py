@@ -157,9 +157,9 @@ class Test(commands.Cog):
         url.svg("glazedhax.svg", scale = 8)
         channel = ctx.channel
         file = discord.File("/home/glazed/DatapuntoBot/glazedhax.svg", filename="glazedhax.svg")
-        embed = discord.Embed()
-        embed.set_image(url="attachment://glazedhax.svg")
-        await channel.send(file=file, embed=embed)
+#        embed = discord.Embed()
+#        embed.set_image(url="/home/glazedhax.svg")
+        await channel.send_file()
 
 def setup(bot):
     bot.add_cog(Test(bot))
