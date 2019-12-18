@@ -10,7 +10,7 @@ class misc(commands.Cog):
 
 
     @commands.command()
-    ##@commands.has_role(617476156148547619)
+    @commands.has_role(617476156148547619)
     async def speak(self, ctx, channel: discord.TextChannel, *, inp):
         await channel.send(inp)
 

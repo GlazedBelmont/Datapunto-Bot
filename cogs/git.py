@@ -1,5 +1,6 @@
 import asyncio
 import discord
+import re
 from subprocess import call
 from discord.ext import commands
 
@@ -92,20 +93,60 @@ class git(commands.Cog):
         await tmp.delete()
         await ctx.channel.send(f"```peepee\n\n{echo_devkitarm}```")
 
-    @commands.guild_only()
     @commands.command()
-    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
-    async def calltest(self, ctx, auto=False):
-        tmp = await ctx.send('doing the shit...')
+    @commands.has_role(617476156148547619)
+#    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
+    async def compile2(self, ctx, builddir, url, *, makecommand):
+        if builddir is None:
+            builddir = "*/"
+            await ctx.send("a")
+            return
+        if url is None:
+            await ctx.send("No URL")
+    #        url = None
+        if not re.search(".git", url, re.IGNORECASE):
+            await ctx.send("Please provide a .git link please")
 
-        calloutput = await call("echo" "$DEVKITPRO")
-        with open("calloutput.txt", "a+",encoding="utf-8") as f:
-            print(calloutput, sep="\n\n", file=f)
-        await tmp.delete()
-        await ctx.channel.send(f"{calloutput}")
-        
+        if makecommand is None:
+            makecommand = make
+            await ctx.send("aa")
+            return
+        await ctx.send(f'{builddir}\n\n{url}\n\n{makecommand}')     
 
-        
+    @commands.command()
+    async def compile(self, ctx, url, buildfilepattern, *, makecommand="make"):
+        tmp = await ctx.send('Cloning...')
+
+        name = url[19:-4].split('/')[1]
+        if url[:19] != "https://github.com/" or url[-4:] != ".git" or name == "":
+            await tmp.edit(content=f"Bad URL")
+            return
+
+        git_clone = await self.bot.async_call_shell("git clone --recursive --recurse-submodules %s" % url)
+        with open("git_clone_log.txt", "a+",encoding="utf-8") as f:
+            print(git_clone_pksm, sep="\n\n", file=f)
+
+        commit_id = await self.bot.async_call_shell(
+        "cd %s && "
+        "git rev-parse HEAD" % name
+    )
+    with open("git_rev-parse_log.txt", "a+",encoding="utf-8") as f:
+        print(commit_id, sep="\n\n", file=f)
+
+    await tmp.edit(content=f"```{git_clone}```")
+
+    git_make = await self.bot.async_call_shell(
+        "%s && "
+        "mkdir DataPunto_out &&"
+        "mv %s DataPunto_out/ &&"
+        "zip -r DataPunto_out.zip DataPunto_out/" % (name, buildfilepattern)
+    )
+    with open("git_make_log.txt", "a+",encoding="utf-8") as f:
+        print(git_make, sep="\n\n", file=f)
+
+    await tmp.delete()
+    await ctx.channel.send(content=f"Build completed.", file=discord.File(f'DataPunto_out.zip'))
+    await self.bot.async_call_shell(f"cd .. && rm -rf %s" % name)
         
 
 def setup(bot):

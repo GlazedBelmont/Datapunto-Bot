@@ -27,7 +27,8 @@ class Test(commands.Cog):
     @commands.command()
     async def dver(self, ctx):
 
-        print(discord.__version__)
+        output = printf(discord.__version__)
+        await ctx.send(f"{output}")
 
     @commands.command(aliases=["hidechannel"])
     @commands.has_role(617476156148547619)

@@ -86,6 +86,11 @@ async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     await ctx.send("\n".join(channels))
 
+@bot.command(pass_context=True)
+async def roles(ctx):
+    roles = (c.name for c in ctx.message.guild.role if c==role)
+    await ctx.send("\n".join(roles))
+
 
 
 class Datapunto(commands.Bot):
