@@ -3,6 +3,7 @@ import discord
 import re
 from subprocess import call
 from discord.ext import commands
+from cogs.checks import on_reaction_add
 
 class git(commands.Cog):
     def __init__(self, bot):
@@ -74,13 +75,30 @@ class git(commands.Cog):
         await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/PKSM/out/PKSM_Latest.zip'))
         await self.bot.async_call_shell(f"rm -rf PKSM")
         
+
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_role(575834911425167414)
+    async def commit(self, ctx):
+        tmp = await ctx.send('Commiting...')
+        emote = '\N{HOURGLASS}'
+        await ctx.message.add_reaction('\N{HOURGLASS}')
+        if await on_reaction_add(reaction, user) is True:
+            await ctx.send("nice")
+        else:
+            await tmp.edit(content=f'oh well, it didnt work')
+
+
     @commands.command()
     async def pull(self, ctx):
         await ctx.send("Pulling changes...")
         call(['git', 'pull'])
         await ctx.send("👋 Restarting bot!")
         await self.bot.close() 
-        
+
+
+
     @commands.guild_only()
     @commands.command()
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
@@ -95,8 +113,11 @@ class git(commands.Cog):
 
     @commands.command()
     @commands.has_role(617476156148547619)
-#    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
+#   @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def compile2(self, ctx, builddir, url, *, makecommand):
+        inc_stdout=False
+        inc_stderr=False
+
         if builddir is None:
             builddir = "*/"
             await ctx.send("a")
@@ -111,7 +132,9 @@ class git(commands.Cog):
             makecommand = make
             await ctx.send("aa")
             return
-        await ctx.send(f'{builddir}\n\n{url}\n\n{makecommand}')     
+        await ctx.send(f'{builddir}\n\n{url}\n\n{makecommand}')    
+        git_name = await self.bot.async_call_shell("basename `git rev-parse --show-toplevel`")
+        await ctx.send(f'{git_name}')
 
     @commands.command()
     async def compile(self, ctx, url, buildfilepattern, *, makecommand="make"):
@@ -124,29 +147,29 @@ class git(commands.Cog):
 
         git_clone = await self.bot.async_call_shell("git clone --recursive --recurse-submodules %s" % url)
         with open("git_clone_log.txt", "a+",encoding="utf-8") as f:
-            print(git_clone_pksm, sep="\n\n", file=f)
+            print(git_clone, sep="\n\n", file=f)
 
         commit_id = await self.bot.async_call_shell(
         "cd %s && "
         "git rev-parse HEAD" % name
-    )
-    with open("git_rev-parse_log.txt", "a+",encoding="utf-8") as f:
-        print(commit_id, sep="\n\n", file=f)
+        )
+        with open("git_rev-parse_log.txt", "a+",encoding="utf-8") as f:
+            print(commit_id, sep="\n\n", file=f)
 
-    await tmp.edit(content=f"```{git_clone}```")
+        await tmp.edit(content=f"```{git_clone}```")
 
-    git_make = await self.bot.async_call_shell(
-        "%s && "
-        "mkdir DataPunto_out &&"
-        "mv %s DataPunto_out/ &&"
+        git_make = await self.bot.async_call_shell(
+        "cd %s && "
+        "mkdir DataPunto_out && "
+        "mv %s DataPunto_out/ && "
         "zip -r DataPunto_out.zip DataPunto_out/" % (name, buildfilepattern)
-    )
-    with open("git_make_log.txt", "a+",encoding="utf-8") as f:
-        print(git_make, sep="\n\n", file=f)
+        )
+        with open("git_make_log.txt", "a+",encoding="utf-8") as f:
+            print(git_make, sep="\n\n", file=f)
 
-    await tmp.delete()
-    await ctx.channel.send(content=f"Build completed.", file=discord.File(f'DataPunto_out.zip'))
-    await self.bot.async_call_shell(f"cd .. && rm -rf %s" % name)
+        await tmp.delete()
+        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'DataPunto_out.zip'))
+#       await self.bot.async_call_shell(f"cd .. && rm -rf %s" % name)
         
 
 def setup(bot):

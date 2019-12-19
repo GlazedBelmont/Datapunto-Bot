@@ -20,3 +20,12 @@ async def check_trusted():
         return True
     else:
         return False
+
+async def on_reaction_add(reaction, user):
+        if reaction.emoji == emote:
+            if user == ctx.author:
+                return True
+            else:
+                return False
+        else:
+            False
