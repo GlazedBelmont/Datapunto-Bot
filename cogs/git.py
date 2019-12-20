@@ -36,6 +36,7 @@ class git(commands.Cog):
     @commands.command()
     @commands.cooldown(rate=1, per=600.0, type=commands.BucketType.channel)
     async def pksm(self, ctx, auto=False):
+        """Compiles the latest commit of PKSM"""
         tmp = await ctx.send('Cloning...')
 
         git_clone_pksm = await self.bot.async_call_shell("git clone --recursive https://github.com/FlagBrew/PKSM.git")
@@ -80,7 +81,8 @@ class git(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_role(575834911425167414)
-    async def commit(self, ctx):
+    async def commit(self, ctx, message =""):
+        """Commit the latest changes to the repo"""
         tmp = await ctx.send('Commiting...')
         emote = '\N{HOURGLASS}'
         await ctx.message.add_reaction('\N{HOURGLASS}')
@@ -90,17 +92,18 @@ class git(commands.Cog):
             await tmp.edit(content=f'oh well, it didnt work')
 
 
+
     @commands.command()
     async def pull(self, ctx):
+        """Pull the latest commit from the repo"""
         await ctx.send("Pulling changes...")
         call(['git', 'pull'])
         await ctx.send("👋 Restarting bot!")
         await self.bot.close() 
 
 
-
     @commands.guild_only()
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def devkitarm(self, ctx, auto=False):
         tmp = await ctx.send('doing the shit...')
@@ -114,10 +117,9 @@ class git(commands.Cog):
     @commands.command()
     @commands.has_role(617476156148547619)
 #   @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
-    async def compile2(self, ctx, builddir, url, *, makecommand):
-        inc_stdout=False
-        inc_stderr=False
-
+    async def compile(self, ctx, builddir, url, *, makecommand):
+        """Compiles a repo from source\nProvide the .git link, the build directory and the build command"""
+                               
         if builddir is None:
             builddir = "*/"
             await ctx.send("a")
@@ -132,43 +134,52 @@ class git(commands.Cog):
             makecommand = make
             await ctx.send("aa")
             return
-        await ctx.send(f'{builddir}\n\n{url}\n\n{makecommand}')    
-        git_name = await self.bot.async_call_shell("basename `git rev-parse --show-toplevel`")
-        await ctx.send(f'{git_name}')
-
-    @commands.command()
-    async def compile(self, ctx, url, buildfilepattern, *, makecommand="make"):
-        tmp = await ctx.send('Cloning...')
-
-        name = url[19:-4].split('/')[1]
-        if url[:19] != "https://github.com/" or url[-4:] != ".git" or name == "":
-            await tmp.edit(content=f"Bad URL")
-            return
-
-        git_clone = await self.bot.async_call_shell("git clone --recursive --recurse-submodules %s" % url)
-        with open("git_clone_log.txt", "a+",encoding="utf-8") as f:
-            print(git_clone, sep="\n\n", file=f)
-
-        commit_id = await self.bot.async_call_shell(
-        "cd %s && "
-        "git rev-parse HEAD" % name
+        await ctx.send(f"{builddir} is the building directory\n\n{url} is the github repo's link\n\n{makecommand} is the building command")    
+        git_output = await self.bot.async_call_shell(
+            f'git clone {url} && '
+            f'cd $(basename $_ .git){builddir} && '
+             'pwd'
+        #    'basename `git rev-parse --show-toplevel`'
         )
-        with open("git_rev-parse_log.txt", "a+",encoding="utf-8") as f:
-            print(commit_id, sep="\n\n", file=f)
+        with open("compile_log.txt", "a+",encoding="utf-8") as f:
+            print(git_output, sep="\n\n", file=f)
 
-        await tmp.edit(content=f"```{git_clone}```")
 
-        git_make = await self.bot.async_call_shell(
-        "cd %s && "
-        "mkdir DataPunto_out && "
-        "mv %s DataPunto_out/ && "
-        "zip -r DataPunto_out.zip DataPunto_out/" % (name, buildfilepattern)
-        )
-        with open("git_make_log.txt", "a+",encoding="utf-8") as f:
-            print(git_make, sep="\n\n", file=f)
+        await ctx.send(f'{git_output}')
 
-        await tmp.delete()
-        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'DataPunto_out.zip'))
+    #@commands.command()
+    #async def compile2(self, ctx, url, buildfilepattern, *, makecommand="make"):
+    #    tmp = await ctx.send('Cloning...')
+
+    #    name = url[19:-4].split('/')[1]
+    #    if url[:19] != "https://github.com/" or url[-4:] != ".git" or name == "":
+    #        await tmp.edit(content=f"Bad URL")
+    #        return
+
+    #    git_clone = await self.bot.async_call_shell("git clone --recursive --recurse-submodules %s" % url)
+    #    with open("git_clone_log.txt", "a+",encoding="utf-8") as f:
+    #        print(git_clone, sep="\n\n", file=f)
+
+    #    commit_id = await self.bot.async_call_shell(
+    #    "cd %s && "
+    #    "git rev-parse HEAD" % name
+    #    )
+    #    with open("git_rev-parse_log.txt", "a+",encoding="utf-8") as f:
+    #        print(commit_id, sep="\n\n", file=f)
+
+    #    await tmp.edit(content=f"```{git_clone}```")
+
+    #    git_make = await self.bot.async_call_shell(
+    #    "cd %s && "
+    #    "mkdir DataPunto_out && "
+    #    "mv %s DataPunto_out/ && "
+    #    "zip -r DataPunto_out.zip DataPunto_out/" % (name, buildfilepattern)
+    #    )
+    #    with open("git_make_log.txt", "a+",encoding="utf-8") as f:
+    #        print(git_make, sep="\n\n", file=f)
+
+    #    await tmp.delete()
+    #    await ctx.channel.send(content=f"Build completed.", file=discord.File(f'DataPunto_out.zip'))
 #       await self.bot.async_call_shell(f"cd .. && rm -rf %s" % name)
         
 

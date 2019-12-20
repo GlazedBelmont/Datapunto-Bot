@@ -157,7 +157,6 @@ class Common(Cog):
         proc = await asyncio.create_subprocess_shell(str(shell_command),
                                                      stdout=pipe,
                                                      stderr=pipe)
-
         if not (inc_stdout or inc_stderr):
             return "??? you set both stdout and stderr to False????"
 

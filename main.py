@@ -87,9 +87,18 @@ async def textchannels(ctx):
     await ctx.send("\n".join(channels))
 
 @bot.command(pass_context=True)
+async def about(ctx):
+    embed = discord.Embed(title="Datapunto Bot")
+    embed.set_author(name="GlaZedBelmont", url="https://github.com/GlaZedBelmont")
+    embed.description = "The only bot DGC needs!"
+    embed.url = "https://github.com/GlaZedBelmont/Datapunto-Bot"
+    embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/612447948533399571/e2c1461895d5510057d5ad9fc75d423d.png?size=512")
+    await ctx.send(embed=embed)
+
+@bot.command(pass_context=True)
 async def roles(ctx):
-    roles = (c.name for c in ctx.message.guild.role if c==role)
-    await ctx.send("\n".join(roles))
+    allroles = (c.name for c in ctx.author.roles if c==ctx.author.roles)
+    await ctx.send("\n".join(allroles))
 
 
 
