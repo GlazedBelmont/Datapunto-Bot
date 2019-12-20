@@ -14,7 +14,7 @@ class Load(commands.Cog):
             raise commands.NoPrivateMessage()
         return True
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=True, aliases=["laod"])
     async def load(self, ctx, *, module: str):
         """Loads a Cog."""
         try:
@@ -25,7 +25,7 @@ class Load(commands.Cog):
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=True, aliases=["unlaod"])
     async def unload(self, ctx, *, module: str):
         """Unloads a Cog."""
         try:
@@ -39,7 +39,7 @@ class Load(commands.Cog):
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')
 
-    @commands.command(name='reload')
+    @commands.command(name='reload', aliases=["relaod"])
     async def _reload(self, ctx, *, module: str):
         """Reloads a Cog."""
         try:

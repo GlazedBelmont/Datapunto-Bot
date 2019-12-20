@@ -138,14 +138,15 @@ class git(commands.Cog):
         git_output = await self.bot.async_call_shell(
             f'git clone {url} && '
             f'cd $(basename $_ .git){builddir} && '
-             'pwd'
+            f'pwd'
         #    'basename `git rev-parse --show-toplevel`'
         )
         with open("compile_log.txt", "a+",encoding="utf-8") as f:
             print(git_output, sep="\n\n", file=f)
 
+        hasted_output = await self.bot.haste(git_output)
 
-        await ctx.send(f'{git_output}')
+        await ctx.send(f'{hasted_output}')
 
     #@commands.command()
     #async def compile2(self, ctx, url, buildfilepattern, *, makecommand="make"):

@@ -2,6 +2,7 @@
 import logging
 import asyncio
 import yaml
+import aiohttp
 import discord
 from discord.ext import commands
 import os
@@ -18,7 +19,8 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or(
 
 bot.loaded_cogs = []
 bot.unloaded_cogs = []
-
+script_name = os.path.basename(__file__).split('.')[0]
+bot.script_name = script_name
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
@@ -129,6 +131,8 @@ pic_ext = ['.jpg','.png','.jpeg']
 
 @bot.event
 async def on_ready():
+    aioh = {"The Boi": f"{script_name}/1.0'"}
+    bot.aiosession = aiohttp.ClientSession(headers=aioh)
     print('----------')
     print('Logged in as:')
     print(bot.user.name)
