@@ -6,7 +6,7 @@ import re
 import pyqrcode
 
 from pyqrcode import QRCode
-from cogs.checks import is_trusted
+from cogs.checks import is_trusted, check_admin
 from discord.ext import commands
 
 class Test(commands.Cog):
@@ -161,6 +161,13 @@ class Test(commands.Cog):
 #        embed = discord.Embed()
 #        embed.set_image(url="/home/glazedhax.svg")
         await channel.send_file()
+
+    @commands.command()
+    async def kurisutest(self, ctx, member: discord.Member, *, reason=""):
+        """Remove access to help-and-questions. Staff and Helpers only."""
+        if await check_admin(ctx, "BotAdmin", member, "kurisutest"):
+            return
+        await ctx.send("you did NOT the command on yourself, the rest of the command\nshould follow")
 
 def setup(bot):
     bot.add_cog(Test(bot))

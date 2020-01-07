@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 import io
-from cogs.checks import check_trusted
+
 
 class Emoji(commands.Cog):
     def __init__(self, bot):
@@ -29,7 +29,6 @@ class Emoji(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @emoji.command()
-    @check_trusted()
     @commands.bot_has_permissions(manage_emojis=True)
     async def add(self, ctx, emoji_name, *, url):
         emoji_link = await self.bot.aiogetbytes(url)

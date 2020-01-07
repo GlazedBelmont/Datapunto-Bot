@@ -6,9 +6,12 @@ import aiohttp
 import discord
 from discord.ext import commands
 import os
+import traceback
+import sys
 from traceback import format_exception, format_exc
 from datetime import datetime
 from discord import ChannelType
+from discord.utils import get
 '''Bot framework that can dynamically load and unload cogs.'''
 
 config = yaml.safe_load(open('config.yml'))
@@ -26,7 +29,6 @@ logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
-
 
 def initLogging():
     logformat = "%(asctime)s %(name)s:%(levelname)s:%(message)s"
@@ -117,6 +119,20 @@ class Datapunto(commands.Bot):
             'bot-test': None,
         }
 
+        self.admin_roles = {
+            'Bot-Admin': None,
+            'Admin': None,
+        }
+        self.roles = {
+            'Bot-Admin': None,
+            'Admin': None,
+            'crc': None,
+            'DJ': None,
+            'Staff': None,
+            '🛶🤠': None,
+            'Epic Gamer': None,
+            'Movie Night': None,
+        }
 
         self.assistance_channels = {
          self.channels['3ds-assistance-roleplay'],
@@ -128,6 +144,65 @@ class Datapunto(commands.Bot):
 pic_ext = ['.jpg','.png','.jpeg']
 
 
+@bot.event
+async def on_command_error(ctx, error):
+
+# ignored because well, 'or' works instead
+#    if ctx.guild == 554178232531025940:
+#        errorchannel = ctx.guild.get_channel(612386288968138754)
+#    elif ctx.guild == 632566001980145675:
+#        errorchannel = ctx.guild.get_channel(663858377880764417)
+#    else:
+#        errorchannel = ctx.guild.get_channel(663858377880764417)
+#    if hasattr(ctx.command, 'on_error'):
+#        return
+        
+    ignored = (commands.CommandNotFound)
+    error = getattr(error, 'original', error)
+    
+    errorchannel = ctx.guild.get_channel(612386288968138754) or ctx.guild.get_channel(663858377880764417)
+    
+    if isinstance(error, ignored):
+        return
+
+    elif isinstance(error, commands.DisabledCommand):
+        return await ctx.send(f'{ctx.command} has been disabled.')
+
+    elif isinstance(error, commands.MissingRole):
+        try:
+            return await ctx.send(f'{ctx.author.mention}, you are missing the role {missing_role} .')
+        except:
+            pass
+
+    elif isinstance(error, commands.NoPrivateMessage):
+        try:
+            return await ctx.author.send(f'{ctx.command} can not be used in DMs.')
+        except:
+            pass
+
+    elif isinstance(error, commands.MissingRequiredArgument):
+        try:
+            return await ctx.send(f'{ctx.author.mention} **Missing Argument:** {error.param.name}.\n') and await ctx.send_help(ctx.command)
+        except:
+            pass
+
+    elif isinstance(error, commands.BadArgument):
+        if ctx.command.qualified_name == 'tag list':
+            return await ctx.send('I could not find that member. Please try again.')
+
+    msg = "".join(format_exception(type(error), error, error.__traceback__))
+    await errorchannel.send(f"```{msg}```")
+    
+@bot.command(name='repeat', aliases=['mimic', 'copy'])
+async def do_repeat(self, ctx, *, inp: str):
+    await ctx.send(inp)
+
+@do_repeat.error
+async def do_repeat_handler(self, ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        if error.param.name == 'inp':
+            await ctx.send("You forgot to give me input to repeat!")
+            
 
 @bot.event
 async def on_ready():

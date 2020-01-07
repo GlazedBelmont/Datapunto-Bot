@@ -35,5 +35,13 @@ class misc(commands.Cog):
         else:
             await ctx.send("Nope")
 
+    @commands.command()
+    async def myroles(self, ctx):
+        msg = "```\nRoles:\n"
+        for x in ctx.author.roles:
+            msg += f"{x.name}\n"
+        msg += "```"
+        await ctx.send(msg)
+
 def setup(bot):
     bot.add_cog(misc(bot))
