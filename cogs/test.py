@@ -6,7 +6,7 @@ import re
 import pyqrcode
 
 from pyqrcode import QRCode
-from cogs.checks import is_trusted, check_admin
+from cogs.checks import is_admin, check_admin, check_bot_or_admin
 from discord.ext import commands
 
 class Test(commands.Cog):
@@ -30,8 +30,8 @@ class Test(commands.Cog):
         output = printf(discord.__version__)
         await ctx.send(f"{output}")
 
+    @is_admin()
     @commands.command(aliases=["hidechannel"])
-    @commands.has_role(617476156148547619)
     async def hide(self,ctx,channels: commands.Greedy[discord.TextChannel]):
         """Hides a channel from everyone's sight. Bot-Admin only."""
         author = ctx.author
@@ -49,8 +49,8 @@ class Test(commands.Cog):
             await c.send("🙈️ Channel hidden.")
             hidden.append(c)
 
+    @is_admin()
     @commands.command(aliases=["unhidechannel", "showchannel"])
-    @commands.has_role(617476156148547619)
     async def unhide(self,ctx,channels: commands.Greedy[discord.TextChannel]):
         """Unhides a channel from everyone's sight. Bot-Admin only."""
         author = ctx.author
@@ -112,7 +112,7 @@ class Test(commands.Cog):
         msg = f"🕙 **Slowmode**: {ctx.author.mention} set a slowmode delay of {time} ({seconds}) in {ctx.channel.mention}"
         await self.bot.channels["modlogs"].send(msg)
 
-    @is_trusted("Trusted")
+    @is_admin()
     @commands.command()
     async def special(self, ctx):
         
@@ -165,9 +165,14 @@ class Test(commands.Cog):
     @commands.command()
     async def kurisutest(self, ctx, member: discord.Member, *, reason=""):
         """Remove access to help-and-questions. Staff and Helpers only."""
-        if await check_admin(ctx, "BotAdmin", member, "kurisutest"):
+        if await check_bot_or_admin(ctx, "BotAdmin", member, "kurisutest"):
             return
         await ctx.send("you did NOT the command on yourself, the rest of the command\nshould follow")
+
+
+    @commands.command()
+    async def reacttest(ctx):
+        await tmp
 
 def setup(bot):
     bot.add_cog(Test(bot))

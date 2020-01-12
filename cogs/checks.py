@@ -1,3 +1,4 @@
+import asyncio
 import discord
 import re
 from discord.ext import commands
@@ -17,7 +18,6 @@ async def check_admin(ctx):
     msg = ""
     for x in ctx.author.roles:
         msg += f"{x.name}\n"
-        print(f'{x.name}')
     if x.name in admin_roles:
         return True
     else:
@@ -48,3 +48,43 @@ async def on_reaction_add(reaction, user):
                 return False
         else:
             False
+
+
+async def intprompt(self, message, *, timeout=60.0, delete_after=True, author_id=None):
+    fmt = f'{message}\n\nAdd \N{WHITE HEAVY CHECK MARK} to confirm or \N{CROSS MARK} to cancel.'
+
+    author_id = author_id 
+    msg = await self.send(fmt)
+
+    confirm = None
+
+    def react_check(payload):
+        nonlocal confirm
+
+        if payload.message_id != msg.id or payload.user_id != author_id:
+            return False
+        
+        codepoint = str(payload.emoji)
+
+        if codepoint == '\N{WHITE HEAVY CHECK MARK}':
+            confirm = True
+            return True
+        elif codepoint == '\N{CROSS MARK}':
+            confirm = False
+            return True
+
+        return False
+
+    for emoji in ('\N{WHITE HEAVY CHECK MARK}', '\N{CROSS MARK}'):
+        await msg.add_reaction(emoji)
+
+    try:
+        await self.bot.wait_for('raw_reaction_add', react_check=react_check, timeout=timeout)
+    except asyncio.TimeoutError:
+        confirm = None
+
+    try:
+        if delete_after:
+            await msg.delete()
+    finally:
+        return confirm

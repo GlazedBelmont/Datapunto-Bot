@@ -39,9 +39,8 @@ class Emoji(commands.Cog):
                                                                   reason=f"Emoji Added by {ctx.author} "
                                                                   f"(ID: {ctx.author.id})")
             except Exception as ex:
-                self.bot.log.error(ex)
-                return await ctx.send("Something went wrong creating that emoji. Make sure this guild"
-                                      " emoji\'s list isn\'t full and that emoji is under 256kb.")
+               pass
+               
             else:
                 await ctx.send(f"Successfully created {finalized_e} `{finalized_e}`")
         else:

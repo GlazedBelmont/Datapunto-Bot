@@ -119,7 +119,7 @@ class Common(Cog):
     # This function is based on https://stackoverflow.com/a/35435419/3286892
     # by link2110 (https://stackoverflow.com/users/5890923/link2110)
     # modified by Ave (https://github.com/aveao), licensed CC-BY-SA 3.0
-    async def download_file(self, url, local_filename):
+    async def download_file(self, ctx, url, local_filename):
         file_resp = await self.bot.aiosession.get(url)
         file = await file_resp.read()
         with open(local_filename, "wb") as f:

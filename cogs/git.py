@@ -3,7 +3,7 @@ import discord
 import re
 from subprocess import call
 from discord.ext import commands
-from cogs.checks import on_reaction_add, is_admin, check_admin, check_bot_or_admin
+from cogs.checks import on_reaction_add, is_admin, check_admin, check_bot_or_admin, intprompt
 
 class git(commands.Cog):
     def __init__(self, bot):
@@ -11,6 +11,8 @@ class git(commands.Cog):
         self.last_eval_result = None
         self.previous_eval_code = None
     
+
+        
     @commands.guild_only()
     @commands.command()
     @commands.cooldown(rate=1, per=600.0, type=commands.BucketType.channel)
@@ -59,17 +61,13 @@ class git(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @commands.has_role(575834911425167414)
-    async def commit(self, ctx, message =""):
+    @is_admin()
+    async def commit(self, ctx):
         """Commit the latest changes to the repo"""
-        tmp = await ctx.send('Commiting...')
-        emote = '\N{HOURGLASS}'
-        await ctx.message.add_reaction('\N{HOURGLASS}')
-        if await on_reaction_add(reaction, user) is True:
-            await ctx.send("nice")
+        if await intprompt("Commit?", 60.0):
+           await ctx.send("Confirmed")
         else:
-            await tmp.edit(content=f'oh well, it didnt work')
-
+            await ctx.send("Cancelled")
 
 
     @commands.command()
@@ -95,37 +93,46 @@ class git(commands.Cog):
 
     @commands.command()
     @is_admin()
-#   @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
-    async def compile(self, ctx, builddir, url, *, makecommand):
-        """Compiles a repo from source\nProvide the .git link, the build directory and the build command"""
-                               
-        if builddir is None:
-            builddir = "*/"
-            await ctx.send("a")
-            return
-        if url is None:
-            await ctx.send("No URL")
-    #        url = None
-        if not re.search(".git", url, re.IGNORECASE):
-            await ctx.send("Please provide a .git link please")
-
+    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
+    async def compile(self, ctx, builddir, url, *, makecommand=None):
+        """Compiles a repo from source
+        Provide the github repo link, the build directory and the build command.
+        Use */ to specify that the build directory is the current one.
+        Submodules are automatically handled, don't bother with that.
+        """
+                            
         if makecommand is None:
-            makecommand = make
-            await ctx.send("aa")
-            return
-        await ctx.send(f"{builddir} is the building directory\n\n{url} is the github repo's link\n\n{makecommand} is the building command")    
+            makecommand = "make"
+        
+        await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")
+
+        if url[-4:] != ".git":
+            name = url[19:].split('/')[1]
+        else:
+            name = url[19:-4].split('/')[1]
+        
+        tmp = await ctx.send(f"**Compiling {name}...**")
         git_output = await self.bot.async_call_shell(
+            f'mkdir tmp_compile && '
+            f'cd tmp_compile && '
             f'git clone {url} && '
             f'cd $(basename $_ .git){builddir} && '
-            f'{makecommand}'
-        #    'basename `git rev-parse --show-toplevel`'
+            f'git submodule init &&' # just in case it's needed
+            f'git submodule update &&'
+            f'{makecommand} && '
+            f'zip -r {name}.zip ./*'
         )
         with open("compile_log.txt", "a+",encoding="utf-8") as f:
             print(git_output, sep="\n\n", file=f)
 
         hasted_output = await self.bot.haste(git_output)
+        await tmp.delete()
 
-        await ctx.send(f'{hasted_output}')
+        await ctx.send(f"{name}'s compile log:\n{hasted_output}")
+        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot//tmp_compile/{name}/{name}.zip'))
+        cleaning_output = await self.bot.async_call_shell(
+            'rm -r -f tmp_compile'
+        )
 
     #@commands.command()
     #async def compile2(self, ctx, url, buildfilepattern, *, makecommand="make"):
