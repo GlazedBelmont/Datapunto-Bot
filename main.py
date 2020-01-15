@@ -106,6 +106,7 @@ async def roles(ctx):
 
 
 
+
 class Datapunto(commands.Bot):
     def __init__(self, command_prefix, description):
         super().__init__(command_prefix=command_prefix, description=description)
@@ -143,19 +144,12 @@ class Datapunto(commands.Bot):
 
 pic_ext = ['.jpg','.png','.jpeg']
 
+@bot.command()
+async def membercount(ctx):
+    await ctx.send(f'{ctx.guild} has {ctx.guild.member_count:,} members <:blobaww:569934894952611851>')
 
 @bot.event
 async def on_command_error(ctx, error):
-
-# ignored because well, 'or' works instead
-#    if ctx.guild == 554178232531025940:
-#        errorchannel = ctx.guild.get_channel(612386288968138754)
-#    elif ctx.guild == 632566001980145675:
-#        errorchannel = ctx.guild.get_channel(663858377880764417)
-#    else:
-#        errorchannel = ctx.guild.get_channel(663858377880764417)
-#    if hasattr(ctx.command, 'on_error'):
-#        return
         
     ignored = (commands.CommandNotFound)
     error = getattr(error, 'original', error)
