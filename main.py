@@ -100,6 +100,17 @@ async def about(ctx):
     await ctx.send(embed=embed)
 
 @bot.command(pass_context=True)
+async def Kurisu(ctx):
+#    removedrole = ctx.guild.get_role(role)
+#    await member.remove_roles(removedrole)
+    embed = discord.Embed(title="Kurisu")
+    embed.set_author(name="Nintendo Homebrew", url="https://github.com/nh-server")
+    embed.description = "The original Kurisu, not any type of clone"
+    embed.url = "https://github.com/nh-server/Kurisu"
+    embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/232615037108224000/299adf523ee23ac55762c1dea8062f65.webp?size=1024")
+    await ctx.send(embed=embed)
+
+@bot.command(pass_context=True)
 async def roles(ctx):
     allroles = (c.name for c in ctx.author.roles if c==ctx.author.roles)
     await ctx.send("\n".join(allroles))
@@ -148,7 +159,7 @@ pic_ext = ['.jpg','.png','.jpeg']
 async def membercount(ctx):
     await ctx.send(f'{ctx.guild} has {ctx.guild.member_count:,} members <:blobaww:569934894952611851>')
 
-@bot.event
+"""@bot.event
 async def on_command_error(ctx, error):
         
     ignored = (commands.CommandNotFound)
@@ -195,7 +206,7 @@ async def do_repeat(self, ctx, *, inp: str):
 async def do_repeat_handler(self, ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         if error.param.name == 'inp':
-            await ctx.send("You forgot to give me input to repeat!")
+            await ctx.send("You forgot to give me input to repeat!")"""
             
 
 @bot.event
