@@ -171,8 +171,19 @@ class Test(commands.Cog):
 
 
     @commands.command()
-    async def reacttest(ctx):
-        await tmp
+    async def fetch_bantest(self, ctx, id):
+        try:
+            u = await self.bot.fetch_user(id)
+
+        except discord.NotFound:
+            await ctx.send(f"No user with `{id}`.")
+            return
+
+        if ctx.guild.fetch_ban(u) is not :
+            return
+            await ctx.send("banned")
+        else:
+            await ctx.send("not banned")
 
 def setup(bot):
     bot.add_cog(Test(bot))

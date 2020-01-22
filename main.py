@@ -159,7 +159,7 @@ pic_ext = ['.jpg','.png','.jpeg']
 async def membercount(ctx):
     await ctx.send(f'{ctx.guild} has {ctx.guild.member_count:,} members <:blobaww:569934894952611851>')
 
-"""@bot.event
+@bot.event
 async def on_command_error(ctx, error):
         
     ignored = (commands.CommandNotFound)
@@ -206,7 +206,7 @@ async def do_repeat(self, ctx, *, inp: str):
 async def do_repeat_handler(self, ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         if error.param.name == 'inp':
-            await ctx.send("You forgot to give me input to repeat!")"""
+            await ctx.send("You forgot to give me input to repeat!")
             
 
 @bot.event
