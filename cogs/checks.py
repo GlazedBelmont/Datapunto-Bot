@@ -4,26 +4,28 @@ import re
 from discord.ext import commands
 
 admin_roles = [
-    'Bot-Admin',
-    'Admin',
-    'Test-Admin',
+    ' Bot-Admin ',
+    ' Admin ',
+    ' Test-Admin ',
     ]
 
 def is_admin():
     async def predicate(ctx):
         if isinstance(ctx.channel, discord.abc.GuildChannel):
-            return await check_admin(ctx) if not ctx.author == ctx.guild.owner else True
+            return await check_admin(ctx) if not ctx.author != ctx.guild.owner else True
         else:
             return await check_admin(ctx)
     return commands.check(predicate)
 
 
 async def check_admin(ctx):
-    msg = ""
-    for x in ctx.author.roles:
-        msg += x.name
-    await ctx.author.send(f"MSG:{msg}\n\n\nADMIN_ROLES:{admin_roles}")
-    if admin_roles in msg:
+    userroles = (x.name for x in ctx.author.roles)
+    msg = "\n".join(userroles)
+#    for x in ctx.author.roles:
+#        msg += x.name
+#    await ctx.author.send(f"MSG:{msg}\n\n\nADMIN_ROLES:{admin_roles}")
+    await ctx.send(f"``{admin_roles}\n\n\n{msg}``")
+    if admin_roles in userroles:
         await ctx.author.send("yes")
         return True
     else:

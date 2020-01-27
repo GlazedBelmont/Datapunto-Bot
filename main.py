@@ -16,6 +16,7 @@ from discord.utils import get
 
 config = yaml.safe_load(open('config.yml'))
 secure = yaml.safe_load(open('secure.yml'))
+secret = yaml.safe_load(open('secret.yml'))
 bot = commands.Bot(command_prefix=commands.when_mentioned_or(
     config['prefix']),
     description='')
@@ -88,7 +89,8 @@ async def list_cogs(ctx):
 @bot.command(pass_context=True)
 async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
-    await ctx.send("\n".join(channels))
+    msg = "\n".join(channels)
+    await ctx.send(msg)
 
 @bot.command(pass_context=True)
 async def about(ctx):

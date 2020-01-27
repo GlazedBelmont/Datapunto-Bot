@@ -10,3 +10,4 @@ git_make_PKSM_log.txt
 git_rev-parse_PKSM_log.txt
 PKSM/
 cogs/test.py
+secret.yml
