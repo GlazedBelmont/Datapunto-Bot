@@ -3,16 +3,12 @@ import discord
 import re
 from discord.ext import commands
 
-admin_roles = [
-    ' Bot-Admin ',
-    ' Admin ',
-    ' Test-Admin ',
-    ]
+admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
 
 def is_admin():
     async def predicate(ctx):
         if isinstance(ctx.channel, discord.abc.GuildChannel):
-            return await check_admin(ctx) if not ctx.author != ctx.guild.owner else True
+            return await check_admin(ctx) if not ctx.author == ctx.guild.owner else True
         else:
             return await check_admin(ctx)
     return commands.check(predicate)
@@ -20,19 +16,17 @@ def is_admin():
 
 async def check_admin(ctx):
     userroles = (x.name for x in ctx.author.roles)
-    msg = "\n".join(userroles)
-#    for x in ctx.author.roles:
-#        msg += x.name
-#    await ctx.author.send(f"MSG:{msg}\n\n\nADMIN_ROLES:{admin_roles}")
-    await ctx.send(f"``{admin_roles}\n\n\n{msg}``")
-    if admin_roles in userroles:
-        await ctx.author.send("yes")
-        return True
-    else:
-        await ctx.author.send("fuck, try again")
+    for item in userroles:
+        for item1 in admin_roles:
+            if item == item1:
+                return True
+            else:
+                pass
+    
+        await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
         return False
 
-    return await ctx.send("You are not an admin.")
+    
 
 async def check_bot_or_admin(ctx, role, target: discord.member, action: str):
     if target.bot:

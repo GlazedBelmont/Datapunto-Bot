@@ -154,6 +154,13 @@ class Memes(commands.Cog):
     async def screams(self, ctx):
         """Memes."""
         await self._meme(ctx, "lalalala", imagelink="http://i.imgur.com/j0Dkv2Z.png")
+    
+    @commands.command(hidden=True)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def headpat(self, ctx, member: discord.Member=None):
+        if member is None:
+            member = ctx.author
+        await ctx.send(f'{member.mention} <:blobpat:671470684756508672>')
 
 def setup(bot):
     bot.add_cog(Memes(bot))

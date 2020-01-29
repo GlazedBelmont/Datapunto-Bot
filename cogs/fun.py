@@ -5,7 +5,6 @@ import random
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print(f'Cog "{self.qualified_name}" loaded')
 
     @commands.command()
     @commands.cooldown(rate=1, per=20.0, type=commands.BucketType.channel)

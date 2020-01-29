@@ -13,7 +13,6 @@ class Test(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print(f'Cog "{self.qualified_name}" loaded')
 
     @commands.command()
     async def sdroot(self, ctx):
@@ -170,20 +169,26 @@ class Test(commands.Cog):
         await ctx.send("you did NOT the command on yourself, the rest of the command\nshould follow")
 
 
+
+
     @commands.command()
-    async def fetch_bantest(self, ctx, id):
-        try:
-            u = await self.bot.fetch_user(id)
+    async def rolecheck(self, ctx):
+        admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
+        userroles = (x.name for x in ctx.author.roles)
+        msg = "```"
+        for item in userroles:
+            for item1 in admin_roles:
+                if item == item1:
+                    msg += f"\n{item}"
+                    await ctx.send("Permission granted")
+                    msg += "```"
+                    await ctx.send(msg)
+                    return
+                else:
+                    pass
+        msg += "```"
 
-        except discord.NotFound:
-            await ctx.send(f"No user with `{id}`.")
-            return
-
-        if ctx.guild.fetch_ban(u) is not :
-            return
-            await ctx.send("banned")
-        else:
-            await ctx.send("not banned")
+        await ctx.send("You don't seem to have the required roles.")
 
 def setup(bot):
     bot.add_cog(Test(bot))

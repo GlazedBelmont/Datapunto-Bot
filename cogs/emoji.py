@@ -6,7 +6,6 @@ import io
 class Emoji(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print(f'Cog "{self.qualified_name}" loaded')
 
     def aiobytesfinalize(self, image):
         file_e = io.BytesIO()

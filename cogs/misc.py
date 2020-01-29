@@ -6,13 +6,12 @@ from discord.ext import commands
 class misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        print(f'Cog "{self.qualified_name}" loaded')
 
 
     @commands.command()
     @commands.has_role(617476156148547619)
-    async def speak(self, ctx, channel: discord.TextChannel, *, inp):
-        await channel.send(inp)
+    async def speak(self, ctx, member: discord.Member, channel: discord.TextChannel, *, inp):
+        await member.send(inp)
 
     @commands.command(hidden=True)
     async def sendtyping(self, ctx, channel: discord.TextChannel = None):

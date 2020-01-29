@@ -55,6 +55,7 @@ def load_autoload_cogs():
                 bot.loaded_cogs.append(entry[:-3])
             except Exception as e:
                 print(e)
+
             else:
                 print('Succesfully loaded cog {}'.format(entry))
 
@@ -140,6 +141,7 @@ class Datapunto(commands.Bot):
         self.roles = {
             'Bot-Admin': None,
             'Admin': None,
+            'Test-Admin': None,
             'crc': None,
             'DJ': None,
             'Staff': None,
