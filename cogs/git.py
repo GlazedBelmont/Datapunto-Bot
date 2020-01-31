@@ -13,6 +13,23 @@ class git(commands.Cog):
     
 
         
+
+
+
+
+    git_blacklist = (
+        'ls',
+        'cat',
+        'rm',
+        'rmdir',
+        'curl',
+        'pip',
+        'wget',
+        'aplay',
+    )
+
+
+
     @commands.guild_only()
     @commands.command()
     @commands.cooldown(rate=1, per=600.0, type=commands.BucketType.channel)
@@ -104,6 +121,9 @@ class git(commands.Cog):
         if makecommand is None:
             makecommand = "make"
         
+        if git_blacklist in makecommand:
+            await ctx.send("you motherfucker")
+
         await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")
 
         if url[-4:] != ".git":
@@ -113,6 +133,7 @@ class git(commands.Cog):
         
         tmp = await ctx.send(f"**Compiling {name}...**")
         git_output = await self.bot.async_call_shell(
+            f'rm -r -f tmp_compile && '
             f'mkdir tmp_compile && '
             f'cd tmp_compile && '
             f'git clone {url} && '

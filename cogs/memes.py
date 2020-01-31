@@ -162,5 +162,12 @@ class Memes(commands.Cog):
             member = ctx.author
         await ctx.send(f'{member.mention} <:blobpat:671470684756508672>')
 
+    @commands.command(hidden=True)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def pizzatile(self, ctx):
+        quote = ["YOU DON'T WANT THEM GLAZED", "STICK IT IN YOUR OVEN", "YOU GO TO YOUR LARGE HOME IMPROVEMENT STORE",
+         "IM GONNA CUT MYSELF A REALLY BIG PIECE", "LET'S EAT!", "PIZZA TIME", "A DOLLAR!", "BUT THEY DIDN'T HAVE IT AT MY LARGE HOME IMPROVEMENT STORE" ] 
+        await ctx.send(f"**{random.choice(quote)}**\nhttps://www.youtube.com/watch?v=wRuft5bKyZc")
+
 def setup(bot):
     bot.add_cog(Memes(bot))

@@ -187,8 +187,14 @@ class Test(commands.Cog):
                 else:
                     pass
         msg += "```"
-
+        
         await ctx.send("You don't seem to have the required roles.")
+        
+    @is_admin()
+    @commands.command(hidden=True)
+    async def vietcrystal(self, ctx):
+        if ctx.channel == 617391200990920724 or ctx.author == ctx.guild.owner:
+            await ctx.send(content=f"{ctx.author.mention} WRITE THE REPORT", file=discord.File(f'/home/glazed/Desktop/Pokemon_VietCristal.gbc'))
 
 def setup(bot):
     bot.add_cog(Test(bot))

