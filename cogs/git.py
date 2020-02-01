@@ -3,7 +3,18 @@ import discord
 import re
 from subprocess import call
 from discord.ext import commands
-from cogs.checks import on_reaction_add, is_admin, check_admin, check_bot_or_admin, intprompt
+from cogs.checks import is_admin, check_admin, check_bot_or_admin
+
+git_blacklist = [
+    'ls',
+    'cat',
+    'rm',
+    'rmdir',
+    'curl',
+    'pip',
+    'wget',
+    'aplay',
+]
 
 class git(commands.Cog):
     def __init__(self, bot):
@@ -11,24 +22,6 @@ class git(commands.Cog):
         self.last_eval_result = None
         self.previous_eval_code = None
     
-
-        
-
-
-
-
-    git_blacklist = (
-        'ls',
-        'cat',
-        'rm',
-        'rmdir',
-        'curl',
-        'pip',
-        'wget',
-        'aplay',
-    )
-
-
 
     @commands.guild_only()
     @commands.command()
@@ -69,6 +62,7 @@ class git(commands.Cog):
         )
         with open("git_make_PKSM_log.txt", "a+",encoding="utf-8") as f:
             print(git_make_pksm, sep="\n\n", file=f)
+            print("_/\_/\_/\_/\_", sep="\n\n", file=f)
         
         await tmp.delete()
         await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/PKSM/out/PKSM_Latest.zip'))
@@ -120,8 +114,10 @@ class git(commands.Cog):
                             
         if makecommand is None:
             makecommand = "make"
-        
-        if git_blacklist in makecommand:
+        def check(git_blacklist, makecommand):
+            return {x in git_blacklist} & {makecommand}
+            
+        if str(git_blacklist) in makecommand:
             await ctx.send("you motherfucker")
 
         await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")

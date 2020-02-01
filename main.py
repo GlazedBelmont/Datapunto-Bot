@@ -87,6 +87,7 @@ async def list_cogs(ctx):
     for page in cog_list.pages:
         await ctx.send(page)
 
+
 @bot.command(pass_context=True)
 async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
@@ -117,8 +118,6 @@ async def Kurisu(ctx):
 async def roles(ctx):
     allroles = (c.name for c in ctx.author.roles if c==ctx.author.roles)
     await ctx.send("\n".join(allroles))
-
-
 
 
 class Datapunto(commands.Bot):
@@ -160,9 +159,13 @@ class Datapunto(commands.Bot):
 
 pic_ext = ['.jpg','.png','.jpeg']
 
-@bot.command()
+@bot.command(pass_context=True)
 async def membercount(ctx):
     await ctx.send(f'{ctx.guild} has {ctx.guild.member_count:,} members <:blobaww:569934894952611851>')
+
+@bot.command(aliases=["guildcount"])
+async def servercount(self, ctx):
+    await ctx.send(f"{self.bot.guilds}")
 
 @bot.event
 async def on_command_error(ctx, error):

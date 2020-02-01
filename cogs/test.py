@@ -161,15 +161,6 @@ class Test(commands.Cog):
 #        embed.set_image(url="/home/glazedhax.svg")
         await channel.send_file()
 
-    @commands.command()
-    async def kurisutest(self, ctx, member: discord.Member, *, reason=""):
-        """Remove access to help-and-questions. Staff and Helpers only."""
-        if await check_bot_or_admin(ctx, "BotAdmin", member, "kurisutest"):
-            return
-        await ctx.send("you did NOT the command on yourself, the rest of the command\nshould follow")
-
-
-
 
     @commands.command()
     async def rolecheck(self, ctx):
@@ -196,8 +187,5 @@ class Test(commands.Cog):
         if ctx.channel == 617391200990920724 or ctx.author == ctx.guild.owner:
             await ctx.send(content=f"{ctx.author.mention} WRITE THE REPORT", file=discord.File(f'/home/glazed/Desktop/Pokemon_VietCristal.gbc'))
 
-    @commands.command(hidden=True)
-    async def whoisowner(self, ctx):
-        await ctx.send(f"{bot.owner_id}")
 def setup(bot):
     bot.add_cog(Test(bot))

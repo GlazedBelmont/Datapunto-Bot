@@ -1,5 +1,5 @@
 from discord.ext import commands
-from cogs.checks import on_reaction_add, is_admin, check_admin, check_bot_or_admin, intprompt
+from cogs.checks import is_admin, check_admin, check_bot_or_admin, prompt
 
 class Load(commands.Cog):
     """
@@ -24,6 +24,7 @@ class Load(commands.Cog):
             await ctx.send('✅ Extension loaded.')
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')
+
     @is_admin()
     @commands.command(hidden=True, aliases=["unlaod"])
     async def unload(self, ctx, *, module: str):

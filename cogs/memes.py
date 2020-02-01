@@ -79,6 +79,7 @@ class Memes(commands.Cog):
     @commands.command(name="succ", aliases=['suck'], hidden=True)
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def succ(self, ctx, member: discord.Member=None):
+        """owo, what's this? *notices your bulge*"""
         if member is None:
             member = ctx.author
 
@@ -88,6 +89,7 @@ class Memes(commands.Cog):
     @commands.command(name="slap",hidden=True)
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def slap(self, ctx, member: discord.Member = None):
+        """eelslap the shit out of you!"""
         if member is None:
             member = ctx.author
 
@@ -158,6 +160,7 @@ class Memes(commands.Cog):
     @commands.command(hidden=True)
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
     async def headpat(self, ctx, member: discord.Member=None):
+        """Headpatting you to death!"""
         if member is None:
             member = ctx.author
         await ctx.send(f'{member.mention} <:blobpat:671470684756508672>')
@@ -165,9 +168,17 @@ class Memes(commands.Cog):
     @commands.command(hidden=True)
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
     async def pizzatile(self, ctx):
+        """Now with the quote!!"""
         quote = ["YOU DON'T WANT THEM GLAZED", "STICK IT IN YOUR OVEN", "YOU GO TO YOUR LARGE HOME IMPROVEMENT STORE",
          "IM GONNA CUT MYSELF A REALLY BIG PIECE", "LET'S EAT!", "PIZZA TIME", "A DOLLAR!", "BUT THEY DIDN'T HAVE IT AT MY LARGE HOME IMPROVEMENT STORE" ] 
         await ctx.send(f"**{random.choice(quote)}**\nhttps://www.youtube.com/watch?v=wRuft5bKyZc")
+
+
+    @commands.command(hidden=True)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def eevee(self,ctx):
+        """Eevee wants your money"""
+        await ctx.send("https://i.imgur.com/O6cXfwY.png")
 
 def setup(bot):
     bot.add_cog(Memes(bot))

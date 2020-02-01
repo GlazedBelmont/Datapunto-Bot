@@ -8,24 +8,19 @@ admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
 def is_admin():
     async def predicate(ctx):
         if isinstance(ctx.channel, discord.abc.GuildChannel):
-            return await check_admin(ctx)  if not ctx.author == ctx.guild.owner else True
+            return await check_admin(ctx)  if not ctx.author != ctx.guild.owner and ctx.author.id == 308260538637484032 else True
         else:
             return await check_admin(ctx)
     return commands.check(predicate)
 
 
 async def check_admin(ctx):
-    userroles = (x.name for x in ctx.author.roles)
-    for item in userroles:
-        for item1 in admin_roles:
-            if item == item1:
-                return True
-            else:
-                pass
+    if {x.name for x in ctx.author.roles} & {item for item in admin_roles}:
+        return True
+    else:
+        await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
+        return False
     
-    await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
-    return False
-
     
 
 async def check_bot_or_admin(ctx, role, target: discord.member, action: str):
@@ -53,42 +48,25 @@ async def on_reaction_add(reaction, user):
         else:
             False
 
+async def prompt(self, ctx, message=str, timeout=60.0):
+    msg = await ctx.send(f"{message}")
+    await msg.add_reaction('✅')
+    await msg.add_reaction('❌')
+    await asyncio.sleep(1)
+    target = ctx.author
 
-async def intprompt(self, message, *, timeout=60.0, delete_after=True, author_id=None):
-    fmt = f'{message}\n\nAdd \N{WHITE HEAVY CHECK MARK} to confirm or \N{CROSS MARK} to cancel.'
-
-    author_id = author_id 
-    msg = await self.send(fmt)
-
-    confirm = None
-
-    def react_check(payload):
-        nonlocal confirm
-
-        if payload.message_id != msg.id or payload.user_id != author_id:
-            return False
-        
-        codepoint = str(payload.emoji)
-
-        if codepoint == '\N{WHITE HEAVY CHECK MARK}':
-            confirm = True
-            return True
-        elif codepoint == '\N{CROSS MARK}':
-            confirm = False
-            return True
-
-        return False
-
-    for emoji in ('\N{WHITE HEAVY CHECK MARK}', '\N{CROSS MARK}'):
-        await msg.add_reaction(emoji)
+    def check(reaction, user):
+        return user == ctx.author and str(reaction.emoji) == '✅' or str(reaction.emoji) == '❌'
 
     try:
-        await self.bot.wait_for('raw_reaction_add', react_check=react_check, timeout=timeout)
+        reaction, user = await self.bot.wait_for('reaction_add', timeout=timeout, check=check)
     except asyncio.TimeoutError:
-        confirm = None
+        await ctx.send('Timeout')
 
-    try:
-        if delete_after:
-            await msg.delete()
-    finally:
-        return confirm
+    else:
+        if str(reaction.emoji) == '✅':
+            await ctx.send('Permission granted')
+            return False
+        else:
+            await ctx.send('Cancelled')
+            return True
