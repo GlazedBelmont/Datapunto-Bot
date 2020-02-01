@@ -114,11 +114,12 @@ class git(commands.Cog):
                             
         if makecommand is None:
             makecommand = "make"
-        def check(git_blacklist, makecommand):
-            return {x in git_blacklist} & {makecommand}
-            
-        if str(git_blacklist) in makecommand:
-            await ctx.send("you motherfucker")
+
+        for item in git_blacklist:
+                if item in makecommand:
+                    await ctx.send("let's not")
+                    return
+
 
         await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")
 
