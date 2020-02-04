@@ -197,7 +197,29 @@ class Paginator:
         if self.sub_confirm == 0:
             self.sub_confirm += 1
             await self.channel.send(f"You've chosen {self.current}")
-            self.entries = romhacks
+            if self.current == 0: # Red
+                self.entries =
+            elif self.current == 1: # Blue
+                self.entries
+            elif self.current == 2: # Yellow
+                self.entries
+            elif self.current == 3: # Gold
+                self.entries
+            elif self.current == 4: # Silver
+                self.entries
+            elif self.current == 5: # Crystal 
+                self.entries
+            elif self.current == 6: # FireRed
+                self.entries
+            elif self.current == 7: # LeafGreen
+                self.entries
+            elif self.current == 8: # Ruby
+                self.entries
+            elif self.current == 9: # Sapphire
+                self.entries
+            elif self.current == 10: # Emerald
+                self.entries
+#            self.entries = romhacks # changes soon!!!!
             self.reactions.append(('\N{LEFTWARDS ARROW WITH HOOK}', self.go_back))
             self.current = 0
             await self.alter(self.current)

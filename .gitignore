@@ -12,3 +12,5 @@ PKSM/
 cogs/test.py
 secret.yml
 cogs/DGC.py
+cogs/collection.py
+cogs/vcinjects.py
