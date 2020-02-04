@@ -27,24 +27,24 @@ import asyncio
 from secret import games, romhacks_image, romhacks_files, romhacks
 
 class Paginator:
-    def __init__(self, ctx, embed=True):
+    def __init__(self, ctx, embed=True): # Omit entries so we can define them here
         self.bot = ctx.bot
         self.ctx = ctx
-        self.entries = games
+        self.entries = games # Basically the initial pool of elements
         entries = games
 #        self.image_url = image_url
         self.embed = embed
         self.max_pages = len(entries)-1
         self.msg = ctx.message
         self.paginating = True
-        self.user_ = ctx.author
-        self.channel = ctx.channel
-        self.current = 0
-        self.romhacks_files = romhacks_files
-        self.sub_confirm = 0
+        self.user_ = ctx.author # Who can use the prompt
+        self.channel = ctx.channel # Where to post it
+        self.current = 0 # Make sure we are at the first choice
+        self.romhacks_files = romhacks_files # Just in case
+        self.sub_confirm = 0 # Set to 0 since we are initially on first bank
 #        self.current_romhack_file = self.current
         self.max_files = len(romhacks_files)-1
-        self.clean = 0
+        self.clean = 0 # 0 will keep reactions, 1 will clear them
         
         self.reactions = [('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', self.first_page),
                           ('\N{BLACK LEFT-POINTING TRIANGLE}', self.backward),
@@ -56,21 +56,21 @@ class Paginator:
                           ('\N{BALLOT BOX WITH CHECK}', self.confirm)]
 
     async def setup(self):
-        if self.embed is False:
+        if self.embed is False: # Will send text
             try:
                 self.msg = await self.channel.send(self.entries[0])
             except AttributeError:
                 await self.channel.send(self.entries)
-        else:
+        else: # Will send embeds 
             try:
-                self.msg = await self.channel.send(embed=self.entries[0])
+                self.msg = await self.channel.send(embed=self.entries[0]) # the choice 0 of self.entries
             except (AttributeError, TypeError):
                 await self.channel.send(embed=self.entries)
 
-        if len(self.entries) == 1:
+        if len(self.entries) == 1: # Will not add reactions if we only have 1 entries
             return
 
-        for (r, _) in self.reactions:
+        for (r, _) in self.reactions: # r is reactions, _ is their function
             await self.msg.add_reaction(r)
 
     async def alter(self, page: int): # page is self.current
@@ -78,12 +78,14 @@ class Paginator:
             if self.sub_confirm == 1:
                 await self.msg.add_reaction('\N{LEFTWARDS ARROW WITH HOOK}')
 
-            await self.msg.edit(embed=self.entries[page])
-            if self.clean == 1 and self.sub_confirm == 0:
+            await self.msg.edit(embed=self.entries[page]) # Change the current option
+            
+            if self.clean == 1 and self.sub_confirm == 0: # if you came back from a romhacks page
                 await self.msg.clear_reactions()
                 for (r, _) in self.reactions:
                     await self.msg.add_reaction(r)
                     self.clean -= 1
+                    
         except (AttributeError, TypeError):
             await self.msg.edit(content=self.entries[page])
 
@@ -102,15 +104,15 @@ class Paginator:
             await self.alter(self.current)
 
     async def forward(self):
-        if self.current == self.max_pages:
+        if self.current == self.max_pages: # Return to first choice if we hit the last one
             self.current = 0
             await self.alter(self.current)
-        else:
+        else: 
             self.current += 1
-            await self.alter(self.current)
+            await self.alter(self.current) # Simply execute the alter function to change the option
 
     async def last_page(self):
-        self.current = self.max_pages
+        self.current = self.max_pages # Set the value to the last option
 #        self.current_romhack_file = self.max_files
         await self.alter(self.current)
 
@@ -126,7 +128,7 @@ class Paginator:
 
         delete = await self.channel.send(f"Which page do you want to turn to? **1-{self.max_pages+1}?**")
         try:
-            number = int((await self.bot.wait_for('message', check=check, timeout=60)).content)
+            number = int((await self.bot.wait_for('message', check=check, timeout=60)).content) # Wait for reaction
         except asyncio.TimeoutError:
             return await self.ctx.send("You ran out of time.")
         else:    
@@ -162,7 +164,7 @@ class Paginator:
             embed.add_field(name="Information ℹ", value="This reaction takes you to this page.")
             embed.add_field(name="Stop ⏹️", value="This reaction stops everything.")
             embed.add_field(name="Confirm ☑️", value="This reaction allows you to confirm your choice\nand see the romhacks for this game")
-        else:
+        else: # basically if self.entries != games, aka if they are romhacks.
             embed = discord.Embed()
             embed.set_author(name='Instructions')
             embed.description = "Hi! Please choose the romhack that you'd like!" 
@@ -181,68 +183,68 @@ class Paginator:
         await self.msg.edit(embed=embed)
 
     def _check(self, reaction, user):
-        if user.id != self.user_.id:
+        if user.id != self.user_.id: # if the user who reacted is the user who initiated the prompt
             return False
 
-        if reaction.message.id != self.msg.id:
+        if reaction.message.id != self.msg.id: # if the post who got a reaction is the prompt
             return False
 
         for (emoji, func) in self.reactions:
-            if reaction.emoji == emoji:
-                self.execute = func
+            if reaction.emoji == emoji: # if a emoji in self.reactions was used
+                self.execute = func # set its action to self.execute
                 return True
-        return False
+        return False # if the emoji isnt in self.reactions
 
     async def confirm(self):
-        if self.sub_confirm == 0:
+        if self.sub_confirm == 0: # if you were on the games prompt
             self.sub_confirm += 1
             await self.channel.send(f"You've chosen {self.current}")
             if self.current == 0: # Red
-                self.entries =
+                self.entries = Red_romhacks
             elif self.current == 1: # Blue
-                self.entries
+                self.entries = Blue_romhacks
             elif self.current == 2: # Yellow
-                self.entries
+                self.entries = Yellow_romhacks
             elif self.current == 3: # Gold
-                self.entries
+                self.entries = Gold_reactions
             elif self.current == 4: # Silver
-                self.entries
+                self.entries = Silver_reactions
             elif self.current == 5: # Crystal 
-                self.entries
+                self.entries = Crystal_romhacks
             elif self.current == 6: # FireRed
-                self.entries
+                self.entries = FireRed_romhacks
             elif self.current == 7: # LeafGreen
-                self.entries
+                self.entries = LeafGreen_romhacks
             elif self.current == 8: # Ruby
-                self.entries
+                self.entries = Ruby_romhacks
             elif self.current == 9: # Sapphire
-                self.entries
+                self.entries = Sapphire_romhacks
             elif self.current == 10: # Emerald
-                self.entries
+                self.entries = Emerald_romhacks
 #            self.entries = romhacks # changes soon!!!!
             self.reactions.append(('\N{LEFTWARDS ARROW WITH HOOK}', self.go_back))
             self.current = 0
             await self.alter(self.current)
-        else:
+        else: # if you chose a romhack
             
             try:
                 await self.msg.clear_reactions()
                 await self.channel.send(f"Confirmed\nHere you go!")
-                file = discord.File(self.romhacks_files[self.current])
+                file = discord.File(self.romhacks_files[self.current]) # that part will need to be changed so it sends the correct romhack file from the correct game
                 await self.channel.send(file=file)
                 return True
             except discord.Forbidden:
                 await self.msg.delete()
         
     async def go_back(self):
-        if self.sub_confirm == 1:
+        if self.sub_confirm == 1: # checks if you were on a romhacks page
             self.sub_confirm -= 1
             self.entries = games
             self.reactions.remove(('\N{LEFTWARDS ARROW WITH HOOK}', self.go_back))
             self.current = 0
-            self.clean += 1
+            self.clean += 1 # that way self.alter will clear reactions so the part below is impossible
             await self.alter(self.current)
-        else:
+        else: # Shouldn't happen because the button isnt supposed to appear on the games prompt'
 
             try:
                 await self.channel.send("ok so this is not supposed to happen at ALL")
@@ -250,7 +252,7 @@ class Paginator:
                 await self.msg.delete()
 
 
-#    async def switch(self):
+#    async def switch(self):    # Not going to be used because thumbnails turned out to work
 #        try:
 #            await self.msg.clear_reactions()
 #            await self.channel.send("Confirmed")
@@ -263,21 +265,21 @@ class Paginator:
 
 
     async def paginate(self):
-        perms = self.ctx.me.guild_permissions.manage_messages
-        await self.setup()
+        perms = self.ctx.me.guild_permissions.manage_messages # so the check for perms below will work
+        await self.setup() # Setup the prompt
         while self.paginating:
-            if perms:
+            if perms: # Do we have perms?
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', check=self._check, timeout=120)
                 except asyncio.TimeoutError:
                     return await self.stop()
 
                 try:
-                    await self.msg.remove_reaction(reaction, user)
+                    await self.msg.remove_reaction(reaction, user) # remove the inputted reaction
                 except discord.HTTPException:
                     pass
 
-                await self.execute()
+                await self.execute() # Execute what the inputted reaction does
             else:
                 done, pending = await asyncio.wait(
                     [self.bot.wait_for('reaction_add', check=self._check, timeout=120),
