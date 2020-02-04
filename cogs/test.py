@@ -4,10 +4,11 @@ import datetime
 import time
 import re
 import pyqrcode
+import random
 
 from pyqrcode import QRCode
 from cogs.checks import is_admin, check_admin, check_bot_or_admin
-from discord.ext import commands
+from discord.ext import commands, menus
 
 class Test(commands.Cog):
 
@@ -122,19 +123,6 @@ class Test(commands.Cog):
     
         await ctx.send("{guild.channels}")
 
-#    @commands.command()
-#    async def channeltest(self, ctx):
-
-#   if  isinstance
-
-    @commands.command(aliases=['switchserial'])
-    async def serial(self, ctx):
-        """Picture to show what the hell a serial is""" 
-        embed = discord.Embed(title="Don't know where your Switch's serial is?")
-        embed.description = "This is where the serial is located. Use this number to check if you are patched."
-        embed.set_image(url="https://i.imgur.com/03NfeFN.png")
-        await ctx.send(embed=embed)
-
     @commands.command()
     async def attach(self, ctx):
         if ctx.message.attachment:
@@ -180,12 +168,7 @@ class Test(commands.Cog):
         msg += "```"
         
         await ctx.send("You don't seem to have the required roles.")
-
-    @is_admin()
-    @commands.command(hidden=True)
-    async def vietcrystal(self, ctx):
-        if ctx.channel == 617391200990920724 or ctx.author == ctx.guild.owner:
-            await ctx.send(content=f"{ctx.author.mention} WRITE THE REPORT", file=discord.File(f'/home/glazed/Desktop/Pokemon_VietCristal.gbc'))
+ 
 
 def setup(bot):
     bot.add_cog(Test(bot))

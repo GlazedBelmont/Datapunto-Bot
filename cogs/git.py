@@ -105,7 +105,7 @@ class git(commands.Cog):
     @commands.command()
     @is_admin()
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
-    async def compile(self, ctx, builddir, url, *, makecommand=None):
+    async def compile(self, ctx, builddir, url, *, makecommand=""):
         """Compiles a repo from source
         Provide the github repo link, the build directory and the build command.
         Use */ to specify that the build directory is the current one.
@@ -114,12 +114,6 @@ class git(commands.Cog):
                             
         if makecommand is None:
             makecommand = "make"
-
-        for item in git_blacklist:
-                if item in makecommand:
-                    await ctx.send("let's not")
-                    return
-
 
         await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")
 
@@ -147,7 +141,7 @@ class git(commands.Cog):
         await tmp.delete()
 
         await ctx.send(f"{name}'s compile log:\n{hasted_output}")
-        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot//tmp_compile/{name}/{name}.zip'))
+        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/tmp_compile/{name}/{name}.zip'))
         cleaning_output = await self.bot.async_call_shell(
             'rm -r -f tmp_compile'
         )

@@ -176,7 +176,7 @@ class Memes(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
-    async def eevee(self,ctx):
+    async def eevee(self, ctx):
         """Eevee wants your money"""
         await ctx.send("https://i.imgur.com/O6cXfwY.png")
 

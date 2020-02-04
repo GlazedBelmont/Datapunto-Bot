@@ -16,7 +16,6 @@ from discord.utils import get
 
 config = yaml.safe_load(open('config.yml'))
 secure = yaml.safe_load(open('secure.yml'))
-secret = yaml.safe_load(open('secret.yml'))
 bot = commands.Bot(command_prefix=commands.when_mentioned_or(
     config['prefix']),
     description='')
