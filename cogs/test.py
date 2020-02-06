@@ -168,6 +168,17 @@ class Test(commands.Cog):
         msg += "```"
         
         await ctx.send("You don't seem to have the required roles.")
+
+    @commands.command()
+    async def emojicheck(self, ctx, emoji: discord.Emoji):
+        msg = ""
+        msg += f"Name: `{emoji.name}`"
+        msg += f"\nID: `{emoji.id}`"
+        msg += f"\nAnimated: `{emoji.animated}`"
+        msg += f"\nGuild: `{emoji.guild}`"
+        msg += f"\nURL: `{emoji.url}`"
+        msg += ""
+        await ctx.send(msg)
  
 
 def setup(bot):

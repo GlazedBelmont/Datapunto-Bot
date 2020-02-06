@@ -11,6 +11,34 @@ romhacks_image = []
 romhacks_files = []
 romhacks = []
 
+# Games_Romhacks
+Red_romhacks = []
+Blue_romhacks = []
+Yellow_romhacks = []
+Gold_romhacks = []
+Silver_romhacks = []
+Crystal_romhacks = []
+FireRed_romhacks = []
+LeafGreen_romhacks = []
+Ruby_romhacks = []
+Sapphire_romhacks = []
+Emerald_romhacks = []
+
+# Games_Romhacks
+Red_romhacks_files = []
+Blue_romhacks_files = []
+Yellow_romhacks_files = []
+Gold_romhacks_files = []
+Silver_romhacks_files = []
+Crystal_romhacks_files = []
+FireRed_romhacks_files = []
+LeafGreen_romhacks_files = []
+Ruby_romhacks_files = []
+Sapphire_romhacks_files = []
+Emerald_romhacks_files = []
+
+
+
 # Entries:
 
 Red =  discord.Embed(title='Pokemon Red',
@@ -54,6 +82,10 @@ romhack2_image = "https://cdn.discordapp.com/attachments/559035031172153354/6735
 
 
 #Entries_romhacks:
+"""Gold"""
+Prism =  discord.Embed(title='Pokemon Prism',
+        description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/FireRed/Gaia.jpeg")
+
 """FireRed"""
 Gaia =  discord.Embed(title='Pokemon Gaia',
         description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/FireRed/Gaia.jpeg")
@@ -62,8 +94,10 @@ Gaia =  discord.Embed(title='Pokemon Gaia',
 
 
 #Entries_files:
+"""Gold"""
+Prism_file = "utils/romhacks_files/Gold/Pokemon Prism.gbc"
 """FireRed"""
-Gaia_file = "/home/glazed/DatapuntoBot/utils/romhacks_files/Pokemon Gaia.ips" #utils/romhacks_files/Pokemon_VietCristal.ips"
+Gaia_file = "utils/romhacks_files/FireRed/Pokemon Gaia.gba" #utils/romhacks_files/Pokemon_VietCristal.ips"
 
 romhack2_file = "/home/glazed/DatapuntoBot/git_clone_PKSM_log.txt"
 
@@ -109,13 +143,13 @@ romhacks_image.append(romhack2_image)
 """Yellow"""
 
 """Gold"""
-
+Gold_romhacks.append(Prism)
 """Silver"""
 
 """Crystal"""
 
 """FireRed"""
-romhacks.append(Gaia)
+FireRed_romhacks.append(Gaia)
 
 """LeafGreen"""
 
@@ -125,9 +159,41 @@ romhacks.append(Gaia)
 
 """Emerald"""
 
-#Entries_files append:
-romhacks_files.append(Gaia_file)
-romhacks_files.append(romhack2_file)
-romhacks_files.append(romhack3_file)
-romhacks_files.append(romhack4_file)
-romhacks_files.append(romhack5_file)
+
+#Entries_romhacks_files append:
+"""Red"""
+
+"""Blue"""
+
+"""Yellow"""
+
+"""Gold"""
+Gold_romhacks_files.append(Prism_file)
+"""Silver"""
+
+"""Crystal"""
+
+"""FireRed"""
+FireRed_romhacks_files.append(Gaia_file)
+
+"""LeafGreen"""
+
+"""Ruby"""
+
+"""Sapphire"""
+
+"""Emerald"""
+
+
+# Shitty test
+romhacks_files.append(Red_romhacks_files)
+romhacks_files.append(Blue_romhacks_files)
+romhacks_files.append(Yellow_romhacks_files)
+romhacks_files.append(Gold_romhacks_files)
+romhacks_files.append(Silver_romhacks_files)
+romhacks_files.append(Crystal_romhacks_files)
+romhacks_files.append(FireRed_romhacks_files)
+romhacks_files.append(LeafGreen_romhacks_files)
+romhacks_files.append(Ruby_romhacks_files)
+romhacks_files.append(Sapphire_romhacks_files)
+romhacks_files.append(Emerald_romhacks_files)

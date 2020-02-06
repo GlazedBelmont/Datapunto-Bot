@@ -4,7 +4,7 @@
 
 
 # LIST
-#
+
 # 1 = Red = 0
 # 2 = Blue = 1
 # 3 = Yellow = 2
@@ -23,8 +23,15 @@
 
 import discord
 import asyncio
+import os
+import zipfile
+import re
 
-from secret import games, romhacks_image, romhacks_files, romhacks
+from zipfile import ZipFile
+
+#from secret import games, romhacks_image, romhacks_files, romhacks, Red_romhacks, Blue_romhacks, Yellow_romhacks, Gold_romhacks, Silver_romhacks, Crystal_romhacks, FireRed_romhacks, LeafGreen_romhacks, Ruby_romhacks, Sapphire_romhacks, Emerald_romhacks
+from secret import *
+
 
 class Paginator:
     def __init__(self, ctx, embed=True): # Omit entries so we can define them here
@@ -44,7 +51,13 @@ class Paginator:
         self.sub_confirm = 0 # Set to 0 since we are initially on first bank
 #        self.current_romhack_file = self.current
         self.max_files = len(romhacks_files)-1
+        self.bank = 0
         self.clean = 0 # 0 will keep reactions, 1 will clear them
+        self.games_names = ['Red', 'Blue', 'Yellow', 'Gold', 'Silver',
+                            'Crystal', 'FireRed', 'LeafGreen', 'Ruby',
+                            'Sapphire', 'Emerald']
+        self.tmp = ""
+
         
         self.reactions = [('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', self.first_page),
                           ('\N{BLACK LEFT-POINTING TRIANGLE}', self.backward),
@@ -198,7 +211,9 @@ class Paginator:
     async def confirm(self):
         if self.sub_confirm == 0: # if you were on the games prompt
             self.sub_confirm += 1
-            await self.channel.send(f"You've chosen {self.current}")
+            self.bank = self.current # Stores which game you chose, kinda weird but don't worry about it, since there was no efficient way to do it instead.
+            self.tmp = await self.channel.send(f"You've chosen Pokemon {self.games_names[self.current]}")
+
             if self.current == 0: # Red
                 self.entries = Red_romhacks
             elif self.current == 1: # Blue
@@ -206,9 +221,9 @@ class Paginator:
             elif self.current == 2: # Yellow
                 self.entries = Yellow_romhacks
             elif self.current == 3: # Gold
-                self.entries = Gold_reactions
+                self.entries = Gold_romhacks
             elif self.current == 4: # Silver
-                self.entries = Silver_reactions
+                self.entries = Silver_romhacks
             elif self.current == 5: # Crystal 
                 self.entries = Crystal_romhacks
             elif self.current == 6: # FireRed
@@ -228,11 +243,44 @@ class Paginator:
         else: # if you chose a romhack
             
             try:
+                selected_hack = self.romhacks_files[self.bank][self.current]
+                name = selected_hack.split('/')[3]
+                path = selected_hack[:-4] # -4 to remove .gba or .gbc 
+
+                await self.tmp.edit(content=f"\nYou have chosen {name[:-4]}")
                 await self.msg.clear_reactions()
-                await self.channel.send(f"Confirmed\nHere you go!")
-                file = discord.File(self.romhacks_files[self.current]) # that part will need to be changed so it sends the correct romhack file from the correct game
-                await self.channel.send(file=file)
-                return True
+                
+                file = discord.File(selected_hack) # that part will need to be changed so it sends the correct romhack file from the correct game, Done! :D
+                await self.channel.send(self.current)
+
+                def convert_bytes(num):
+                    for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+                        if num < 1024.0:
+                            return "%3.1f %s" % (num, x)
+                        num /= 1024.0
+
+                filesize = os.path.getsize(selected_hack)
+                conversion = convert_bytes(filesize)
+
+                await self.channel.send(f'{filesize}\n{conversion}')
+                
+
+                if filesize < 8400000:
+                    await self.channel.send(f"Confirmed\nHere you go!")
+                    await self.channel.send(file=file)
+                    return True
+
+                else:
+                    await self.channel.send(f"The file is {filesize - 8400000} bytes too big, the file will be zipped")
+                    
+                    await self.channel.send(path)         
+#                    ZipFile(f"{path}.zip", 'w', zipfile.ZIP_BZIP2, 9).write(f"{self.entries + _files[self.current]}")
+#                    file = discord.File(f"{path}.zip")
+                    
+#                    await self.channel.send(file=file)
+                    
+                    await self.go_back()
+
             except discord.Forbidden:
                 await self.msg.delete()
         
