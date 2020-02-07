@@ -75,37 +75,56 @@ Emerald =  discord.Embed(title='Pokemon Emerald',
         description=f"Hello, we are on page 11").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-Bot-DB/master/Emerald.png")
 
 
-
-# Entries_image:
-romhack1_image = "https://i.imgur.com/TgdOPkG.png"
-romhack2_image = "https://cdn.discordapp.com/attachments/559035031172153354/673564418356936760/PokecordSpawn.jpg"
-
-
 #Entries_romhacks:
+"""Red"""
+Brown = discord.Embed(title='Pokemon Brown',
+        description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/Red/Brown.png")
+
+RedPlusPlus = discord.Embed(title='Pokemon Red++',
+        description = f"Hello, we are on page 2").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/Red/Red%2B%2B.png")
+
 """Gold"""
-Prism =  discord.Embed(title='Pokemon Prism',
+Prism = discord.Embed(title='Pokemon Prism',
         description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/FireRed/Gaia.jpeg")
+
+"""Crystal"""
+Viet_Crystal = discord.Embed(title='Pokemon Vietnamese Crystal',
+        description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/Crystal/Pokemon_VietCristal.png")
 
 """FireRed"""
-Gaia =  discord.Embed(title='Pokemon Gaia',
+Gaia = discord.Embed(title='Pokemon Gaia',
         description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/FireRed/Gaia.jpeg")
+
+"""Ruby"""
+Snakewood = discord.Embed(title='Pokemon Snakewood',
+        description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/Ruby/Snakewood.png")
+
+"""Emerald"""
+Moemon_Emerald = discord.Embed(title='Pokemon Moemon Emerald',
+        description = f"Hello, we are on page 1").set_thumbnail(url="https://raw.githubusercontent.com/Datagame-Community/Datapunto-DB/master/Emerald/Moemon_Emerald.png")
 
 
 
 
 #Entries_files:
+"""Red"""
+Brown_file = "utils/romhacks_files/Red/Pokemon Brown.gb"
+RedPlusPlus_file = "utils/romhacks_files/Red/Pokemon RedPlusPlus.gb"
+
 """Gold"""
 Prism_file = "utils/romhacks_files/Gold/Pokemon Prism.gbc"
+
+"""Crystal"""
+Viet_Crystal_file = "utils/romhacks_files/Crystal/Pokemon_VietCristal.gbc"
+
 """FireRed"""
-Gaia_file = "utils/romhacks_files/FireRed/Pokemon Gaia.gba" #utils/romhacks_files/Pokemon_VietCristal.ips"
+Gaia_file = "utils/romhacks_files/FireRed/Pokemon Gaia.gba"
 
-romhack2_file = "/home/glazed/DatapuntoBot/git_clone_PKSM_log.txt"
+"""Ruby"""
+Snakewood_file = "utils/romhacks_files/Ruby/Pokemon Snakewood.gba"
 
-romhack3_file = "/home/glazed/DatapuntoBot/git_make_log.txt"
-
-romhack4_file = "/home/glazed/DatapuntoBot/git_make_log.txt"
-
-romhack5_file = "/home/glazed/DatapuntoBot/git_rev-parse_log.txt"
+"""Emerald"""
+Moemon_Emerald_file = "utils/romhacks_files/Emerald/Pokemon Moemon Emerald.gba"
 
 # Entries append:
 games.append(Red)
@@ -130,13 +149,10 @@ games.append(Sapphire)
 
 games.append(Emerald)
 
-# Entries_image append: (Useless for now)
-romhacks_image.append(romhack1_image)
-romhacks_image.append(romhack2_image)
-
-
 #Entries_romhacks append:
 """Red"""
+Red_romhacks.append(Brown)
+Red_romhacks.append(RedPlusPlus)
 
 """Blue"""
 
@@ -144,9 +160,11 @@ romhacks_image.append(romhack2_image)
 
 """Gold"""
 Gold_romhacks.append(Prism)
+
 """Silver"""
 
 """Crystal"""
+Crystal_romhacks.append(Viet_Crystal)
 
 """FireRed"""
 FireRed_romhacks.append(Gaia)
@@ -154,14 +172,17 @@ FireRed_romhacks.append(Gaia)
 """LeafGreen"""
 
 """Ruby"""
+Ruby_romhacks.append(Snakewood)
 
 """Sapphire"""
 
 """Emerald"""
-
+Emerald_romhacks.append(Moemon_Emerald)
 
 #Entries_romhacks_files append:
 """Red"""
+Red_romhacks_files.append(Brown_file)
+Red_romhacks_files.append(RedPlusPlus_file)
 
 """Blue"""
 
@@ -169,9 +190,11 @@ FireRed_romhacks.append(Gaia)
 
 """Gold"""
 Gold_romhacks_files.append(Prism_file)
+
 """Silver"""
 
 """Crystal"""
+Crystal_romhacks_files.append(Viet_Crystal_file)
 
 """FireRed"""
 FireRed_romhacks_files.append(Gaia_file)
@@ -179,11 +202,12 @@ FireRed_romhacks_files.append(Gaia_file)
 """LeafGreen"""
 
 """Ruby"""
+Ruby_romhacks_files.append(Snakewood_file)
 
 """Sapphire"""
 
 """Emerald"""
-
+Emerald_romhacks_files.append(Moemon_Emerald_file)
 
 # Shitty test
 romhacks_files.append(Red_romhacks_files)

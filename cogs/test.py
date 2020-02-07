@@ -172,14 +172,15 @@ class Test(commands.Cog):
     @commands.command()
     async def emojicheck(self, ctx, emoji: discord.Emoji):
         msg = ""
-        msg += f"Name: `{emoji.name}`"
+        msg += f"{emoji}"
+        msg += f"\nName: `{emoji.name}`"
         msg += f"\nID: `{emoji.id}`"
         msg += f"\nAnimated: `{emoji.animated}`"
         msg += f"\nGuild: `{emoji.guild}`"
         msg += f"\nURL: `{emoji.url}`"
         msg += ""
         await ctx.send(msg)
- 
+
 
 def setup(bot):
     bot.add_cog(Test(bot))

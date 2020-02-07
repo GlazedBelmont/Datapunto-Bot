@@ -34,7 +34,8 @@ from secret import *
 
 
 class Paginator:
-    def __init__(self, ctx, embed=True): # Omit entries so we can define them here
+    def __init__(self, ctx, debug=True, embed=True): # Omit entries so we can define them here
+        self.debug = debug
         self.bot = ctx.bot
         self.ctx = ctx
         self.entries = games # Basically the initial pool of elements
@@ -77,6 +78,8 @@ class Paginator:
         else: # Will send embeds 
             try:
                 self.msg = await self.channel.send(embed=self.entries[0]) # the choice 0 of self.entries
+                if self.debug is True:
+                    await self.channel.send("**__DEBUG IS ON__**")
             except (AttributeError, TypeError):
                 await self.channel.send(embed=self.entries)
 
@@ -245,13 +248,18 @@ class Paginator:
             try:
                 selected_hack = self.romhacks_files[self.bank][self.current]
                 name = selected_hack.split('/')[3]
-                path = selected_hack[:-4] # -4 to remove .gba or .gbc 
 
-                await self.tmp.edit(content=f"\nYou have chosen {name[:-4]}")
+                if name.split('.')[1] == "gb":
+                    extension = 3 # .gb
+                else:
+                    extension = 4 # .gbc or .gba
+                
+                path = selected_hack[:-extension]
+                    
+                await self.tmp.edit(content=f"\nYou have chosen {name[:-extension]}")
                 await self.msg.clear_reactions()
                 
                 file = discord.File(selected_hack) # that part will need to be changed so it sends the correct romhack file from the correct game, Done! :D
-                await self.channel.send(self.current)
 
                 def convert_bytes(num):
                     for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -262,7 +270,8 @@ class Paginator:
                 filesize = os.path.getsize(selected_hack)
                 conversion = convert_bytes(filesize)
 
-                await self.channel.send(f'{filesize}\n{conversion}')
+                if self.debug is True:
+                    await self.channel.send(f'``{filesize} bytes\n{conversion}``') # For debug purposes
                 
 
                 if filesize < 8400000:
@@ -272,12 +281,19 @@ class Paginator:
 
                 else:
                     await self.channel.send(f"The file is {filesize - 8400000} bytes too big, the file will be zipped")
-                    
-                    await self.channel.send(path)         
-#                    ZipFile(f"{path}.zip", 'w', zipfile.ZIP_BZIP2, 9).write(f"{self.entries + _files[self.current]}")
-#                    file = discord.File(f"{path}.zip")
-                    
-#                    await self.channel.send(file=file)
+                
+                if self.debug is True:
+                    await self.channel.send(path)
+
+                    ZipFile(f"{path}.zip", 'w', zipfile.ZIP_BZIP2, 9).write(selected_hack)
+                    file = discord.File(f"{path}.zip")
+
+                    if os.path.getsize(f"{path}.zip") > 8400000:
+                        await self.channel.send(f"The file is {convert_bytes(os.path.getsize(f'{path}.zip') - 8400000)} too big, an alternative will be implemented soon")
+                    else:    
+                        await self.channel.send(f"Confirmed\nHere you go!")
+                        await self.channel.send(file=file)
+                        return True
                     
                     await self.go_back()
 
@@ -291,6 +307,7 @@ class Paginator:
             self.reactions.remove(('\N{LEFTWARDS ARROW WITH HOOK}', self.go_back))
             self.current = 0
             self.clean += 1 # that way self.alter will clear reactions so the part below is impossible
+            await self.tmp.delete()
             await self.alter(self.current)
         else: # Shouldn't happen because the button isnt supposed to appear on the games prompt'
 
