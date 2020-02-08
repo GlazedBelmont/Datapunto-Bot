@@ -276,7 +276,9 @@ class Paginator:
 
                 if filesize < 8400000:
                     await self.channel.send(f"Confirmed\nHere you go!")
-                    await self.channel.send(file=file)
+                    abc = await self.channel.send(file=file)
+                    await asyncio.sleep(30)
+                    await abc.delete()
                     return True
 
                 else:
@@ -292,7 +294,9 @@ class Paginator:
                         await self.channel.send(f"The file is {convert_bytes(os.path.getsize(f'{path}.zip') - 8400000)} too big, an alternative will be implemented soon")
                     else:    
                         await self.channel.send(f"Confirmed\nHere you go!")
-                        await self.channel.send(file=file)
+                        abc = await self.channel.send(file=file)
+                        await asyncio.sleep(30)
+                        await abc.delete()
                         return True
                     
                     await self.go_back()

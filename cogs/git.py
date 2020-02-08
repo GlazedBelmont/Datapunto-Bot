@@ -141,7 +141,7 @@ class git(commands.Cog):
         await tmp.delete()
 
         await ctx.send(f"{name}'s compile log:\n{hasted_output}")
-        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/tmp_compile/{name}/{name}.zip'))
+        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'tmp_compile/{name}/{name}.zip'))
         cleaning_output = await self.bot.async_call_shell(
             'rm -r -f tmp_compile'
         )
