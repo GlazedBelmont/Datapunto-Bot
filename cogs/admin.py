@@ -61,6 +61,24 @@ class admin(commands.Cog):
         if await prompt(self, ctx, "Am I a good bot?"):
             return
         await ctx.send("<:blobaww:569934894952611851>")
+
+    @commands.command(hidden=True)
+    @commands.has_role(575834911425167414)
+    async def invite(self, ctx, duration:int=0, uses:int=0, *, reason=""):
+        msg = ""
+        if duration == 0:
+            duration = 0
+        if uses == 0:
+            uses = 0
+
+        msg += str(await ctx.channel.create_invite(reason=reason,max_age=duration, max_uses=uses, temporary=False, unique=False))
+        if reason is "":
+            msg += "\nPlease add a reason next time"
+        else:
+            msg += f"\n{reason}"
+
+        await ctx.send(msg)
+            
         
 def setup(bot):
     bot.add_cog(admin(bot))

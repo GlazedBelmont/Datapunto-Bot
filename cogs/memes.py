@@ -180,5 +180,10 @@ class Memes(commands.Cog):
         """Eevee wants your money"""
         await ctx.send("https://i.imgur.com/O6cXfwY.png")
 
+    @commands.command(hidden=True)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def nobrain(self, ctx, *, action="hacc"):
+        await ctx.send(f'`I have no brain and I must {" ".join(action)}`')
+
 def setup(bot):
     bot.add_cog(Memes(bot))

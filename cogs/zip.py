@@ -8,7 +8,7 @@ class Zip(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def zipdir(path, ziph):
+    async def zipfile(path, ziph):
         for root, dirs, files in os.walk(path):
             for files in files:
                 ziph.write(os.path.join(root, file))

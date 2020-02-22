@@ -166,6 +166,11 @@ async def membercount(ctx):
 async def servercount(self, ctx):
     await ctx.send(f"{self.bot.guilds}")
 
+async def escape_text(text):
+    text = str(text)
+    return discord.utils.escape_markdown(discord.utils.escape_mentions(text))
+
+
 @bot.event
 async def on_command_error(ctx, error):
         

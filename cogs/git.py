@@ -112,7 +112,7 @@ class git(commands.Cog):
         Submodules are automatically handled, don't bother with that.
         """
                             
-        if makecommand is None:
+        if makecommand is :
             makecommand = "make"
 
         await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")

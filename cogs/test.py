@@ -9,6 +9,7 @@ import random
 from pyqrcode import QRCode
 from cogs.checks import is_admin, check_admin, check_bot_or_admin
 from discord.ext import commands, menus
+from subprocess import call
 
 class Test(commands.Cog):
 
@@ -69,15 +70,32 @@ class Test(commands.Cog):
             unhidden.append(c)
 
     @commands.command()
-    async def move(self,ctx,channels: commands.Greedy[discord.TextChannel], *, category: typing.Union[discord.CategoryChannel, discord.TextChannel]):
+    async def move(self,ctx,channels: commands.Greedy[discord.TextChannel], *, category: discord.CategoryChannel.name):
 
-        if not channels:
-            await ctx.send("Fuck you on about")
-        if category == ctx.channel.category_id:
-            await ctx.send(":excusemewtf:")
-        else:
-            await ctx.send("yeah that wont work, dude")
+        await ctx.send(category.id)
+        
+#        if {category} & {x.id for x in ctx.guild.categories}:
+#            for i in channels:
+#                if {i.category_id} & {category}:
+#                    await ctx.send(f"{i.category_id}\n<#{i.category_id}>")
+#                    await ctx.send("Valid ID but why are you trying to move them where they already are?")
+#                    return
+#                else:
+#                    pass
+#    
+#            else:
+#                await ctx.send("Valid ID and different category")
+#                for i in channels:
+#                    await ctx.send(str(category))
+#                    await i.edit(category=str(category))
+#        else:
+#            await ctx.send("Not a valid category ID")
 
+    #    for x in ctx.guild.categories:
+    #        await ctx.send(f"{x.name}\n")
+    #    if not channels:
+    #        await ctx.send("Fuck you on about")
+        
 
     @commands.guild_only()
     @commands.command()
@@ -130,25 +148,35 @@ class Test(commands.Cog):
         else:
             await ctx.send("attached or you're just bad at python, glazed")
 
-    @commands.command()
+    @commands.command(aliases=["dump", "parser", "dumpparser"])
     async def crash(self, ctx):
         if ctx.message.attachments:
-            content += f.filename().endswith('.dmp')
-            await ctx.channel.send("it works")
+            a = ctx.message.attachments[0]
+            if a.filename.lower().endswith('.dmp'):
+                tmp = await ctx.channel.send("Parsing in progress")
+                file_resp = await self.bot.aiosession.get(a.url)
+                file = await file_resp.read()
+                with open("dump.dmp", "wb") as f:
+                    f.write(file)
+
+                parse_output = await self.bot.async_call_shell(f"python3 utils/dump_parser.py dump.dmp")
+                await ctx.send(f"```{parse_output[7:]}```")
+                await tmp.delete()
+                await self.bot.async_call_shell("rm dump.dmp")
+            else:
+                await ctx.send("Not a valid .dmp file")
         else:
-            await ctx.channel.send("shut")
+            await ctx.channel.send("No attachments")
 
     @commands.command()
-    async def qrcode(self, ctx):
-        link = "https://glazedbelmont.github.io/"
-        url = pyqrcode.create(link)
-        url.svg("glazedhax.svg", scale = 8)
-        channel = ctx.channel
-        file = discord.File("/home/glazed/DatapuntoBot/glazedhax.svg", filename="glazedhax.svg")
-#        embed = discord.Embed()
-#        embed.set_image(url="/home/glazedhax.svg")
-        await channel.send_file()
-
+    async def qrcode(self, ctx, *, message):
+#        link = "https://glazedbelmont.github.io/"
+        url = pyqrcode.create(message)
+        url.svg("qr.svg", scale = 8)
+        file = discord.File("/home/glazed/DatapuntoBot/qr.svg", filename="qr.svg")
+        embed = discord.Embed()
+        embed.set_image(url=file)
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def rolecheck(self, ctx):
