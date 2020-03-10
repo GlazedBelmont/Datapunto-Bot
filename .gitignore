@@ -14,6 +14,7 @@ cogs/vcinjects.py
 
 # Random stuff that nobody wants
 logs/
+utils/
 random_files/
 utils/boxarts
 utils/romhacks_files
