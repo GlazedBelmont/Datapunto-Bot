@@ -8,27 +8,101 @@ from discord.ext import commands
 import os
 import traceback
 import sys
+import random
+
 from traceback import format_exception, format_exc
 from datetime import datetime
 from discord import ChannelType
 from discord.utils import get
-'''Bot framework that can dynamically load and unload cogs.'''
+from cogs.checks import is_admin
 
 config = yaml.safe_load(open('config.yml'))
 secure = yaml.safe_load(open('secure.yml'))
-bot = commands.Bot(command_prefix=commands.when_mentioned_or(
-    config['prefix']),
-    description='')
+home_path = os.path.dirname(os.path.realpath(__file__))
+
+
+
+
+# Logging stuff
+logs_dir = home_path + '/logs/'
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename=logs_dir+'discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+
+class Datapunto(commands.Bot):
+    def __init__(self, command_prefix, description, status, activity):
+        super().__init__(command_prefix=command_prefix, description=description, status=status, activity=activity)
+        
+        self.startup = datetime.now()
+        
+        self.channels = {
+            'wiiu-assistance-roleplay': None,
+            '3ds-assistance-roleplay': None,
+            'bot-err': None,
+            'bot-test': None,
+        }
+
+        self.admin_roles = {
+            'Bot-Admin': None,
+            'Admin': None,
+        }
+        self.roles = {
+            'Bot-Admin': None,
+            'Admin': None,
+            'Test-Admin': None,
+            'crc': None,
+            'DJ': None,
+            'Staff': None,
+            '🛶🤠': None,
+            'Epic Gamer': None,
+            'Movie Night': None,
+        }
+
+        self.Roleplay_channels = {
+         self.channels['3ds-assistance-roleplay'],
+         self.channels['wiiu-assistance-roleplay'],
+        }
+        self.home_path = home_path
+        self.logs_dir = logs_dir
+
+    @staticmethod
+    def escape_text(text):
+        text = str(text)
+        return discord.utils.escape_markdown(discord.utils.escape_mentions(text))
+
+
+activity_list = {
+    'playing': 0,
+    'streaming': 1,
+    'listening': 2,
+    'watching': 3,
+}
+
+
+status = [
+    'online',
+    'offline',
+    'idle',
+    'dnd',
+]
+
+bot = Datapunto(command_prefix=commands.when_mentioned_or(config['prefix']), description='',
+    status=discord.Status("online"), activity=discord.Activity(name="frii gaemz", type=random.choice(list(activity_list.values()))))
 
 bot.loaded_cogs = []
 bot.unloaded_cogs = []
-script_name = os.path.basename(__file__).split('.')[0]
-bot.script_name = script_name
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
+
+#bot.script_name = script_name
+#script_name = os.path.basename(__file__).split('.')[0]
+bot.script_name = script_name = os.path.basename(__file__).split('.')[0]
+bot.load_extension("jishaku")
+
+
+
+
+
 
 def initLogging():
     logformat = "%(asctime)s %(name)s:%(levelname)s:%(message)s"
@@ -36,6 +110,11 @@ def initLogging():
                         datefmt='%Y-%m-%d %H:%M:%S')
     logging.getLogger("discord").setLevel(logging.WARNING)
     return logging.getLogger("Datapunto Bot")
+
+def check_if_logs_dir_exist():
+    '''Checks if the "logs" directory exists and creates it otherwise'''
+    os.makedirs('logs', exist_ok=True)
+
 
 def check_if_dirs_exist():
     '''Function that creates the "cogs" directory if it doesn't exist already'''
@@ -69,6 +148,7 @@ def get_names_of_unloaded_cogs():
             bot.unloaded_cogs.append(entry[:-3])
 
 check_if_dirs_exist()
+check_if_logs_dir_exist()
 load_autoload_cogs()
 get_names_of_unloaded_cogs()
 
@@ -86,14 +166,14 @@ async def list_cogs(ctx):
     for page in cog_list.pages:
         await ctx.send(page)
 
-
-@bot.command(pass_context=True)
+@is_admin("Test-Admin")
+@bot.command()
 async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     msg = "\n".join(channels)
     await ctx.send(msg)
 
-@bot.command(pass_context=True)
+@bot.command()
 async def about(ctx):
     embed = discord.Embed(title="Datapunto Bot")
     embed.set_author(name="GlaZedBelmont", url="https://github.com/GlaZedBelmont")
@@ -102,10 +182,8 @@ async def about(ctx):
     embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/612447948533399571/e2c1461895d5510057d5ad9fc75d423d.png?size=512")
     await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+@bot.command()
 async def Kurisu(ctx):
-#    removedrole = ctx.guild.get_role(role)
-#    await member.remove_roles(removedrole)
     embed = discord.Embed(title="Kurisu")
     embed.set_author(name="Nintendo Homebrew", url="https://github.com/nh-server")
     embed.description = "The original Kurisu, not any type of clone"
@@ -113,52 +191,12 @@ async def Kurisu(ctx):
     embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/232615037108224000/299adf523ee23ac55762c1dea8062f65.webp?size=1024")
     await ctx.send(embed=embed)
 
-@bot.command(pass_context=True)
+@bot.command()
 async def roles(ctx):
     allroles = (c.name for c in ctx.author.roles if c==ctx.author.roles)
     await ctx.send("\n".join(allroles))
 
-
-class Datapunto(commands.Bot):
-    def __init__(self, command_prefix, description):
-        super().__init__(command_prefix=command_prefix, description=description)
-        
-        self.startup = datetime.now()
-        
-        self.channels = {
-            'wiiu-assistance-roleplay': None,
-            '3ds-assistance-roleplay': None,
-            'bot-err': None,
-            'bot-test': None,
-        }
-
-        self.admin_roles = {
-            'Bot-Admin': None,
-            'Admin': None,
-        }
-        self.roles = {
-            'Bot-Admin': None,
-            'Admin': None,
-            'Test-Admin': None,
-            'crc': None,
-            'DJ': None,
-            'Staff': None,
-            '🛶🤠': None,
-            'Epic Gamer': None,
-            'Movie Night': None,
-        }
-
-        self.assistance_channels = {
-         self.channels['3ds-assistance-roleplay'],
-         self.channels['wiiu-assistance-roleplay'],
-        }
-
-
-    bot.load_extension("jishaku")
-
-pic_ext = ['.jpg','.png','.jpeg']
-
-@bot.command(pass_context=True)
+@bot.command()
 async def membercount(ctx):
     await ctx.send(f'{ctx.guild} has {ctx.guild.member_count:,} members <:blobaww:569934894952611851>')
 
@@ -166,18 +204,15 @@ async def membercount(ctx):
 async def servercount(self, ctx):
     await ctx.send(f"{self.bot.guilds}")
 
-async def escape_text(text):
-    text = str(text)
-    return discord.utils.escape_markdown(discord.utils.escape_mentions(text))
 
-
+# Error Handler
 @bot.event
 async def on_command_error(ctx, error):
         
     ignored = (commands.CommandNotFound)
     error = getattr(error, 'original', error)
     
-    errorchannel = ctx.guild.get_channel(612386288968138754) or ctx.guild.get_channel(663858377880764417)
+    errorchannel = ctx.guild.get_channel(config['error_channels'][ctx.guild.id])
     
     if isinstance(error, ignored):
         return
@@ -203,6 +238,20 @@ async def on_command_error(ctx, error):
         except:
             pass
 
+    elif isinstance(error, commands.CheckFailure):
+        try:
+            if ctx.guild.id == '632566001980145675':
+                pass
+            return await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
+        except:
+            pass
+
+    elif isinstance(error, commands.CommandOnCooldown):
+        try:
+            return await ctx.send(f"You're on cooldown, try again in {error.retry_after:.2f}s")
+        except:
+            pass
+
     elif isinstance(error, commands.BadArgument):
         if ctx.command.qualified_name == 'tag list':
             return await ctx.send('I could not find that member. Please try again.')
@@ -223,7 +272,7 @@ async def do_repeat_handler(self, ctx, error):
 
 @bot.event
 async def on_ready():
-    aioh = {"The Boi": f"{script_name}/1.0'"}
+    aioh = {"User-Agent": f"{script_name}/1.0'"}
     bot.aiosession = aiohttp.ClientSession(headers=aioh)
     print('----------')
     print('Logged in as:')

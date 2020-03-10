@@ -5,16 +5,7 @@ from subprocess import call
 from discord.ext import commands
 from cogs.checks import is_admin, check_admin, check_bot_or_admin
 
-git_blacklist = [
-    'ls',
-    'cat',
-    'rm',
-    'rmdir',
-    'curl',
-    'pip',
-    'wget',
-    'aplay',
-]
+
 
 class git(commands.Cog):
     def __init__(self, bot):
@@ -29,21 +20,23 @@ class git(commands.Cog):
     async def pksm(self, ctx, auto=False):
         """Compiles the latest commit of PKSM"""
         tmp = await ctx.send('Cloning...')
-
-        git_clone_pksm = await self.bot.async_call_shell("git clone --recursive https://github.com/FlagBrew/PKSM.git")
-        with open("git_clone_PKSM_log.txt", "a+",encoding="utf-8") as f:
+        git_clone_pksm = await self.bot.async_call_shell(
+            "mkdir tmp_compile && "
+            "cd tmp_compile && "
+            "git clone --recursive https://github.com/FlagBrew/PKSM.git")
+        with open(f"{self.bot.logs_dir}" + "git_clone_PKSM_log.txt", "a+",encoding="utf-8") as f:
             print(git_clone_pksm, sep="\n\n", file=f)
 
         commit_id = await self.bot.async_call_shell(
-            "cd PKSM && "
+            "cd tmp_compile/PKSM && "
             "git rev-parse HEAD"
         )
-        with open("git_rev-parse_PKSM_log.txt", "a+",encoding="utf-8") as f:
+        with open(f"{self.bot.logs_dir}" + "git_rev-parse_PKSM_log.txt", "a+",encoding="utf-8") as f:
             print(commit_id, sep="\n\n", file=f)
         
         await tmp.edit(content=f"```{git_clone_pksm}```")
         git_submodule_pksm = await self.bot.async_call_shell(
-            "cd PKSM && "
+            "cd tmp_compile/PKSM && "
             "git submodule init && "
             "git submodule update"
         )
@@ -53,26 +46,27 @@ class git(commands.Cog):
         await tmp.edit(content=f"Building...")
         
         git_make_pksm = await self.bot.async_call_shell(
-            "cd PKSM && "
+            "cd tmp_compile/PKSM && "
             "make all && "
             "cd 3ds/out && "
-            "mv *.3dsx *.cia /home/glazed/DatapuntoBot/PKSM/out/ && "
-            "cd /home/glazed/DatapuntoBot/PKSM/out && "
+            f"mkdir {self.bot.home_path}/tmp_compile/PKSM/out && "
+            f"mv *.3dsx *.cia {self.bot.home_path}/tmp_compile/PKSM/out/ && "
+            f"cd {self.bot.home_path}/tmp_compile/PKSM/out/ && "
             "zip -r PKSM_Latest.zip ./*"
         )
-        with open("git_make_PKSM_log.txt", "a+",encoding="utf-8") as f:
+        with open(f"{self.bot.logs_dir}" + "git_make_PKSM_log.txt", "a+",encoding="utf-8") as f:
             print(git_make_pksm, sep="\n\n", file=f)
             print("_/\_/\_/\_/\_", sep="\n\n", file=f)
         
         await tmp.delete()
-        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'/home/glazed/DatapuntoBot/PKSM/out/PKSM_Latest.zip'))
-        await self.bot.async_call_shell(f"rm -rf PKSM")
+        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'{self.bot.home_path}/tmp_compile/PKSM/out/PKSM_Latest.zip'))
+        await self.bot.async_call_shell(f"cd tmp_compile && rm -rf PKSM")
         
 
 
     @commands.command()
     @commands.guild_only()
-    @is_admin()
+    @is_admin("Bot-Admin")
     async def commit(self, ctx):
         """Commit the latest changes to the repo"""
         if await intprompt("Commit?", 60.0):
@@ -80,7 +74,7 @@ class git(commands.Cog):
         else:
             await ctx.send("Cancelled")
 
-
+    @is_admin("GlaZy")
     @commands.command()
     async def pull(self, ctx):
         """Pull the latest commit from the repo"""
@@ -89,21 +83,8 @@ class git(commands.Cog):
         await ctx.send("👋 Restarting bot!")
         await self.bot.close() 
 
-
-    @commands.guild_only()
-    @commands.command(hidden=True)
-    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
-    async def devkitarm(self, ctx, auto=False):
-        tmp = await ctx.send('doing the shit...')
-
-        echo_devkitarm = await self.bot.async_call_shell("echo $DEVKITARM")
-        with open("echo_devkitarm_log.txt", "a+",encoding="utf-8") as f:
-            print(echo_devkitarm, sep="\n\n", file=f)
-        await tmp.delete()
-        await ctx.channel.send(f"```peepee\n\n{echo_devkitarm}```")
-
     @commands.command()
-    @is_admin()
+    @is_admin("Test-Admin")
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def compile(self, ctx, builddir, url, *, makecommand=""):
         """Compiles a repo from source
@@ -112,16 +93,18 @@ class git(commands.Cog):
         Submodules are automatically handled, don't bother with that.
         """
                             
-        if makecommand is :
+        if makecommand == "":
             makecommand = "make"
 
         await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")
 
         if url[-4:] != ".git":
-            name = url[19:].split('/')[1]
+            name = url.split('/')[-1]
         else:
-            name = url[19:-4].split('/')[1]
-        
+            name = url[:-4].split('/')[-1]
+
+        await self.bot.change_presence(status="dnd")
+
         tmp = await ctx.send(f"**Compiling {name}...**")
         git_output = await self.bot.async_call_shell(
             f'rm -r -f tmp_compile && '
@@ -129,58 +112,27 @@ class git(commands.Cog):
             f'cd tmp_compile && '
             f'git clone {url} && '
             f'cd $(basename $_ .git){builddir} && '
-            f'git submodule init &&' # just in case it's needed
-            f'git submodule update &&'
+            f'git submodule init && ' # just in case it's needed
+            f'git submodule update && '
             f'{makecommand} && '
             f'zip -r {name}.zip ./*'
         )
-        with open("compile_log.txt", "a+",encoding="utf-8") as f:
+        with open(f"{self.bot.logs_dir}" + "compile_log.txt", "a+",encoding="utf-8") as f:
             print(git_output, sep="\n\n", file=f)
 
         hasted_output = await self.bot.haste(git_output)
         await tmp.delete()
-
         await ctx.send(f"{name}'s compile log:\n{hasted_output}")
-        await ctx.channel.send(content=f"Build completed.", file=discord.File(f'tmp_compile/{name}/{name}.zip'))
-        cleaning_output = await self.bot.async_call_shell(
-            'rm -r -f tmp_compile'
-        )
 
-    #@commands.command()
-    #async def compile2(self, ctx, url, buildfilepattern, *, makecommand="make"):
-    #    tmp = await ctx.send('Cloning...')
-
-    #    name = url[19:-4].split('/')[1]
-    #    if url[:19] != "https://github.com/" or url[-4:] != ".git" or name == "":
-    #        await tmp.edit(content=f"Bad URL")
-    #        return
-
-    #    git_clone = await self.bot.async_call_shell("git clone --recursive --recurse-submodules %s" % url)
-    #    with open("git_clone_log.txt", "a+",encoding="utf-8") as f:
-    #        print(git_clone, sep="\n\n", file=f)
-
-    #    commit_id = await self.bot.async_call_shell(
-    #    "cd %s && "
-    #    "git rev-parse HEAD" % name
-    #    )
-    #    with open("git_rev-parse_log.txt", "a+",encoding="utf-8") as f:
-    #        print(commit_id, sep="\n\n", file=f)
-
-    #    await tmp.edit(content=f"```{git_clone}```")
-
-    #    git_make = await self.bot.async_call_shell(
-    #    "cd %s && "
-    #    "mkdir DataPunto_out && "
-    #    "mv %s DataPunto_out/ && "
-    #    "zip -r DataPunto_out.zip DataPunto_out/" % (name, buildfilepattern)
-    #    )
-    #    with open("git_make_log.txt", "a+",encoding="utf-8") as f:
-    #        print(git_make, sep="\n\n", file=f)
-
-    #    await tmp.delete()
-    #    await ctx.channel.send(content=f"Build completed.", file=discord.File(f'DataPunto_out.zip'))
-#       await self.bot.async_call_shell(f"cd .. && rm -rf %s" % name)
-        
+        try:
+            await ctx.channel.send(content=f"Build completed.", file=discord.File(f'{self.bot.home_path}/tmp_compile/{name}/{name}.zip'))
+        except FileNotFoundError:
+            await ctx.send(f'`{self.bot.home_path}/tmp_compile/{name}/{name}.zip` does not exist.')
+        finally:
+            await self.bot.change_presence(status="online")
+            cleaning_output = await self.bot.async_call_shell(
+                'rm -r -f tmp_compile'
+            )
 
 def setup(bot):
     bot.add_cog(git(bot))

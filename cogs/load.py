@@ -1,4 +1,5 @@
 from discord.ext import commands
+import os
 from cogs.checks import is_admin, check_admin, check_bot_or_admin, prompt
 
 class Load(commands.Cog):
@@ -13,7 +14,7 @@ class Load(commands.Cog):
             raise commands.NoPrivateMessage()
         return True
 
-    @is_admin()
+    @is_admin("Admin")
     @commands.command(hidden=True, aliases=["laod"])
     async def load(self, ctx, *, module: str):
         """Loads a Cog."""
@@ -25,7 +26,7 @@ class Load(commands.Cog):
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')
 
-    @is_admin()
+    @is_admin("Admin")
     @commands.command(hidden=True, aliases=["unlaod"])
     async def unload(self, ctx, *, module: str):
         """Unloads a Cog."""
@@ -40,10 +41,12 @@ class Load(commands.Cog):
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')
 
-    @is_admin()
+    @is_admin("Admin")
     @commands.command(name='reload', aliases=["relaod"])
     async def _reload(self, ctx, *, module: str):
         """Reloads a Cog."""
+        if module == "all":
+            module = entry in os.listdir('cogs')
         try:
             if module[0:7] != "cogs.":
                 module = "cogs." + module

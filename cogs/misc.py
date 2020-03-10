@@ -8,10 +8,14 @@ class misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @is_admin()
+    def escape_text(self, text):
+        text = str(text)
+        return discord.utils.escape_markdown(discord.utils.escape_mentions(text))
+
+    @is_admin("Test-Admin")
     @commands.command()
     async def speak(self, ctx, channel: discord.TextChannel, *, inp):
-        await channel.send(inp)
+        await channel.send(self.escape_text(inp))
 
     @commands.command(hidden=True)
     async def sendtyping(self, ctx, channel: discord.TextChannel = None):
@@ -19,7 +23,7 @@ class misc(commands.Cog):
             channel = ctx.channel
         await channel.trigger_typing()
 
-    @is_admin()
+    @is_admin("Admin")
     @commands.command(hidden=True)
     async def dm(self, ctx, member: discord.Member, *, inp):
         try:
@@ -44,5 +48,13 @@ class misc(commands.Cog):
         msg += "```"
         await ctx.send(msg)
 
+    @commands.command()
+    async def serverinfo(self, ctx):
+        archived = discord.utils.find(lambda m: m.name == 'Archived', ctx.guild.categories)
+        embed = discord.Embed(title=f"{ctx.guild.name}")
+        embed.set_thumbnail(url=ctx.guild.icon_url_as(static_format='png'))
+        embed.description = f"ID: {ctx.guild.id}\nCreation date: {ctx.guild.created_at}\nMembers: {ctx.guild.member_count}\nOwner: {ctx.guild.owner}\nChannels: {len(ctx.guild.text_channels) + len(ctx.guild.voice_channels)}\nArchived Channels: {len(archived.channels)}"
+        await ctx.send(embed=embed)
+       
 def setup(bot):
     bot.add_cog(misc(bot))

@@ -3,25 +3,33 @@ import discord
 import re
 from discord.ext import commands
 
-admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
+admin_roles = {'GlaZy': 0, 'Bot-Admin': 1, 'Admin': 2, 'Test-Admin': 3} # Aight look, I know Kurisu uses that too but it's a good way to check
 
-def is_admin():
+def is_admin(role):
     async def predicate(ctx):
         if isinstance(ctx.channel, discord.abc.GuildChannel):
-            return await check_admin(ctx)  if not ctx.author == ctx.guild.owner and ctx.author.id != 308260538637484032 else True
+            return await check_admin(ctx, role)  if not ctx.author == ctx.guild.owner and ctx.author.id != 308260538637484032 else True
         else:
-            return await check_admin(ctx)
+            return await check_admin(ctx, role)
     return commands.check(predicate)
 
 
-async def check_admin(ctx):
+async def check_admin(ctx, role):
     if {x.name for x in ctx.author.roles} & {item for item in admin_roles}:
         return True
     else:
-        await ctx.send(f"You don't have the permission to run ```{ctx.command.qualified_name}```")
         return False
     
-    
+#async def check_admin(ctx, role):
+#    admin_role_check = {x.name for x in ctx.author.roles} & {item for item in admin_roles}
+#    if admin_role_check:
+#        if admin_roles[admin_role_check] >= admin_roles[role]:
+#            return True
+#        else:
+#            pass
+#    else:
+#        return False
+
 
 async def check_bot_or_admin(ctx, role, target: discord.member, action: str):
     if target.bot:
@@ -38,15 +46,6 @@ async def check_bot_or_admin(ctx, role, target: discord.member, action: str):
         return False
 
     return await ctx.send(f"you cannot do the {action} command on {who}.")
-
-async def on_reaction_add(reaction, user):
-        if reaction.emoji == emote:
-            if user == ctx.author:
-                return True
-            else:
-                return False
-        else:
-            False
 
 async def prompt(self, ctx, message=str, timeout=60.0):
     msg = await ctx.send(f"{message}")

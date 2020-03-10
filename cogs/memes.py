@@ -2,12 +2,14 @@ import discord
 from discord.ext import commands
 import random
 import math
+import asyncio
 
 class Memes(commands.Cog):
     def __init__(self, bot):
         """Approved™ memes"""
         self.bot = bot
 
+    
     async def _meme(self, ctx, msg, directed: bool = False, imagelink=None):
         author = ctx.author
         if isinstance(ctx.channel, discord.abc.GuildChannel):
@@ -184,6 +186,37 @@ class Memes(commands.Cog):
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
     async def nobrain(self, ctx, *, action="hacc"):
         await ctx.send(f'`I have no brain and I must {" ".join(action)}`')
+    
+    @commands.command(hidden=True)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def legocity(self, ctx):
+        msg = ""
+        questions = ["Who?", "What?"]
+        def check(m):
+            return m.author == ctx.author
+
+        for x in questions:
+            tmp = await ctx.send(x)
+            try:
+                m = await self.bot.wait_for('message', timeout=45.0, check=check)
+            except asyncio.TimeoutError:
+                await ctx.send('Timeout')
+            else:
+                if x == questions[0]:
+                    msg += f"{m.content} has fallen into"
+                    await tmp.delete()
+                else:
+                    break
+
+        await tmp.delete()
+        msg += self.bot.escape_text(f" {m.content} in Lego City")
+        await ctx.send(msg)
+
+    @commands.command(hidden=True, aliases=['howto'])
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def lmgtfy(self, ctx, *, howto:str):
+        link = 'https://lmgtfy.com/?q=' + (' '.join(howto.split())).replace(' ', '+')
+        await ctx.send(self.bot.escape_text(link))
 
 def setup(bot):
     bot.add_cog(Memes(bot))

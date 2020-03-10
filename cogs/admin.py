@@ -13,17 +13,18 @@ class admin(commands.Cog):
 
 
 
-    @is_admin()
+    @is_admin("Bot-Admin")
     @commands.command(aliases = ['reboot', 'restart'])
     async def close(self, ctx):
         await ctx.channel.send("Ah shit, here we go again")
         await self.bot.close()
 
-    @commands.command(hidden=True)
-    @commands.has_role(575834911425167414)
-    async def fullclose(self, ctx):
-        await self.bot.async_call_shell("")
+#    @commands.command(hidden=True)
+#    @commands.has_role(575834911425167414)
+#    async def fullclose(self, ctx):
+#        await self.bot.async_call_shell("")
 
+    @is_admin("GlaZy")
     @commands.command()
     async def guildleave(self, ctx, serverid: int):
         server = self.bot.get_guild(serverid)
@@ -63,7 +64,7 @@ class admin(commands.Cog):
         await ctx.send("<:blobaww:569934894952611851>")
 
     @commands.command(hidden=True)
-    @commands.has_role(575834911425167414)
+    @commands.has_role(627989593454804995)
     async def invite(self, ctx, duration:int=0, uses:int=0, *, reason=""):
         msg = ""
         if duration == 0:
@@ -78,6 +79,40 @@ class admin(commands.Cog):
             msg += f"\n{reason}"
 
         await ctx.send(msg)
+
+
+    @commands.command(hidden=True)
+#    @commands.has_role(575834911425167414)
+    async def give(self, ctx, roles: commands.Greedy[discord.Role], *, users: discord.User):
+        members = []
+
+#        if len(roles) > 1:
+#            for role in roles:
+#                await users.add_roles(role)
+#        else:
+#            await users.add_roles(roles)
+#            members.append(users.name)
+
+        members.sort(key=str.casefold)
+        msg = f"``The following roles:\n"
+
+        if len(roles) > 1:
+            for role in roles:
+                await users.add_roles(role)
+                msg += f"- {role.name}\n"
+        else:
+            await users.add_roles(roles)
+            msg += f"- {roles}\n"
+
+        msg += f"have been given to the following users:\n"
+        for member in members:
+            msg += f"{member}\n"
+        else:
+            msg += f"{users.name}"
+        msg += "``"
+
+        await ctx.send(msg)
+
             
         
 def setup(bot):

@@ -10,15 +10,17 @@ class mod(commands.Cog):
         self.bot = bot
 
 
-    def escape_text(text):
+    def escape_text(self, text):
         text = str(text)
         return discord.utils.escape_markdown(discord.utils.escape_mentions(text))
     
     @commands.command(aliases=["clear"])
-    @is_admin()
-    async def purge(self, ctx, limit: int):
+    @is_admin("Admin")
+    async def purge(self, ctx, limit: int, channel: discord.TextChannel=None):
         """Clears a given number of messages. Admins only."""
-        await ctx.channel.purge(limit=limit+1)
+        if channel is None:
+            channel = ctx.channel
+        await channel.purge(limit=limit+1)
         tmp = await ctx.send("Clearing the selected messages")
         await asyncio.sleep(4)
         await tmp.delete()
@@ -66,11 +68,11 @@ class mod(commands.Cog):
 
     @commands.guild_only()
     @commands.command(hidden=True)
-    async def userinfo(self, ctx, u: commands.Greedy[discord.Member]=None):
+    async def userinfo(self, ctx, u: discord.Member or self.bot.fetch_user(int)=None):
         """Prototype of a new userinfo"""
 
-        if not u:
-            u = ctx.author
+#        if not self.bot.fetch_user(u):
+#            u = ctx.author
 
         if not ctx.guild.get_member(u.id):
             u = await self.bot.fetch_user(u.id)

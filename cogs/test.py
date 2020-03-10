@@ -5,9 +5,11 @@ import time
 import re
 import pyqrcode
 import random
+import os
+import sys
 
 from pyqrcode import QRCode
-from cogs.checks import is_admin, check_admin, check_bot_or_admin
+from cogs.checks import is_admin, check_admin, check_bot_or_admin, prompt
 from discord.ext import commands, menus
 from subprocess import call
 
@@ -31,7 +33,7 @@ class Test(commands.Cog):
         output = printf(discord.__version__)
         await ctx.send(f"{output}")
 
-    @is_admin()
+    @is_admin("Admin")
     @commands.command(aliases=["hidechannel"])
     async def hide(self,ctx,channels: commands.Greedy[discord.TextChannel]):
         """Hides a channel from everyone's sight. Bot-Admin only."""
@@ -50,7 +52,7 @@ class Test(commands.Cog):
             await c.send("🙈️ Channel hidden.")
             hidden.append(c)
 
-    @is_admin()
+    @is_admin("Admin")
     @commands.command(aliases=["unhidechannel", "showchannel"])
     async def unhide(self,ctx,channels: commands.Greedy[discord.TextChannel]):
         """Unhides a channel from everyone's sight. Bot-Admin only."""
@@ -130,7 +132,7 @@ class Test(commands.Cog):
         msg = f"🕙 **Slowmode**: {ctx.author.mention} set a slowmode delay of {time} ({seconds}) in {ctx.channel.mention}"
         await self.bot.channels["modlogs"].send(msg)
 
-    @is_admin()
+    @is_admin("Test-Admin")
     @commands.command()
     async def special(self, ctx):
         
@@ -149,24 +151,27 @@ class Test(commands.Cog):
             await ctx.send("attached or you're just bad at python, glazed")
 
     @commands.command(aliases=["dump", "parser", "dumpparser"])
-    async def crash(self, ctx):
+    async def crash(self, ctx, url=""):
         if ctx.message.attachments:
             a = ctx.message.attachments[0]
             if a.filename.lower().endswith('.dmp'):
-                tmp = await ctx.channel.send("Parsing in progress")
-                file_resp = await self.bot.aiosession.get(a.url)
-                file = await file_resp.read()
-                with open("dump.dmp", "wb") as f:
-                    f.write(file)
-
-                parse_output = await self.bot.async_call_shell(f"python3 utils/dump_parser.py dump.dmp")
-                await ctx.send(f"```{parse_output[7:]}```")
-                await tmp.delete()
-                await self.bot.async_call_shell("rm dump.dmp")
+                url = a.url
+                pass
             else:
                 await ctx.send("Not a valid .dmp file")
+
+        if not url == "":
+            tmp = await ctx.channel.send("Parsing in progress")
+            file_resp = await self.bot.aiosession.get(url)
+            file = await file_resp.read()
+            with open("dump.dmp", "wb") as f:
+                f.write(file)
+            parse_output = await self.bot.async_call_shell(f"{sys.executable} utils/dump_parser.py dump.dmp")
+            await ctx.send(f"```{parse_output[7:]}```")
+            await tmp.delete()
+            await self.bot.async_call_shell("rm dump.dmp")
         else:
-            await ctx.channel.send("No attachments")
+            await ctx.channel.send("No attachments or URL")
 
     @commands.command()
     async def qrcode(self, ctx, *, message):
@@ -179,7 +184,7 @@ class Test(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def rolecheck(self, ctx):
+    async def admincheck(self, ctx):
         admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
         userroles = (x.name for x in ctx.author.roles)
         msg = "```"
@@ -206,9 +211,68 @@ class Test(commands.Cog):
         msg += f"\nAnimated: `{emoji.animated}`"
         msg += f"\nGuild: `{emoji.guild}`"
         msg += f"\nURL: `{emoji.url}`"
+        msg += f"\nShitty d.py string: `<:{emoji.name}:{emoji.id}>`"
         msg += ""
         await ctx.send(msg)
 
+    @commands.command()
+    async def whohas(self, ctx,*, role: discord.Role):
+        if role == ('@everyone' or '554178232531025940'):
+            await ctx.send("Nice try :P")
+            return
+
+        members = []
+
+        for member in ctx.guild.members:
+            if role in member.roles:
+                members.append(member.name)
+        if members == []:
+            await ctx.send('`Nobody has that role.`')
+        else:
+            members.sort(key=str.casefold)
+            msg = f"``The following members have the {role.name} role:\n"
+            for x in members:
+                msg += f"{x}\n"
+            msg += f"[{len(members)}]"
+            msg += "``"
+            await ctx.send(msg)
+
+    @commands.command()
+    async def err(self, ctx):
+        try:
+            await ctx.channel.send(content=f"Build completed.", file=discord.File(f'{self.bot.home_path}/tmp_compile/{name}/{name}.zip'))
+        except FileNotFoundError:
+            await ctx.send(f'`{self.bot.home_path}/tmp_compile/{name}/{name}.zip` does not exist.')
+        finally:
+            await self.bot.change_presence(status="online")
+#        await ctx.send(the_void)
+
+
+
+    
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+#        await message.add_reaction("<:wagu:686742849777303570>")
+        if re.search("wagu", message.content.lower()):
+            await message.add_reaction("<:wagu:686742849777303570>")
+        else:
+            return
+#        konami_code = ":3ds_dpad_up: :3ds_dpad_up: :3ds_dpad_down: :3ds_dpad_down: :3ds_dpad_left: :3ds_dpad_right: :3ds_dpad_left: :3ds_dpad_right: :3ds_button_b: :3ds_button_a:"
+#        walnut = re.fullmatch(konami_code, message.content.lower())
+#        if isinstance(message.channel, discord.abc.PrivateChannel):
+#            return
+#        if message.author == message.guild.me: # don't process messages by the bot or staff or in the helpers channel
+#            return
+#        if message.guild == self.bot.get_guild(554178232531025940): # Don't give a gun to a kid
+#            return
+#        if walnut is not None:
+#            await message.channel.send("yeah no, muted")
+#        else:
+#            await message.channel.send(message.content)
+#            return
+#            await message.channel.send("sad trumper")
+        
 
 def setup(bot):
     bot.add_cog(Test(bot))

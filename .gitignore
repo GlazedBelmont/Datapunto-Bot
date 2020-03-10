@@ -1,16 +1,27 @@
+# Important files
 secure.yml
 config.yml
-**.pyc
-cogs/3music.py
-cogs/mod.py
-cogs/samplecog.py
-discord.log
-git_clone_PKSM_log.txt
-git_make_PKSM_log.txt
-git_rev-parse_PKSM_log.txt
-PKSM/
-cogs/test.py
-secret.yml
+# It's secret :P
+secret.py
+
+# WIP Cogs that aren't public
+cogs/utils.py
+cogs/testing.py
 cogs/DGC.py
+cogs/samplecog.py
 cogs/collection.py
 cogs/vcinjects.py
+
+# Random stuff that nobody wants
+logs/
+random_files/
+utils/boxarts
+utils/romhacks_files
+tmp_compile/
+
+# Dunno what it is but ehhh fuck this
+*/__pycache__
+
+# Just in case
+**.pyc
+
