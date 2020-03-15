@@ -14,7 +14,6 @@ class Load(commands.Cog):
             raise commands.NoPrivateMessage()
         return True
 
-    @is_admin("Admin")
     @commands.command(hidden=True, aliases=["laod"])
     async def load(self, ctx, *, module: str):
         """Loads a Cog."""
@@ -26,7 +25,6 @@ class Load(commands.Cog):
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')
 
-    @is_admin("Admin")
     @commands.command(hidden=True, aliases=["unlaod"])
     async def unload(self, ctx, *, module: str):
         """Unloads a Cog."""
