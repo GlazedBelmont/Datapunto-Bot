@@ -218,5 +218,17 @@ class Memes(commands.Cog):
         link = 'https://lmgtfy.com/?q=' + (' '.join(howto.split())).replace(' ', '+')
         await ctx.send(self.bot.escape_text(link))
 
+    @commands.command(hidden=True, aliases=['pog'])
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def poggers(self, ctx):
+        """Man throwing christmas tree at woman gif, sponsored by validusername16"""
+        await ctx.send("https://imgur.com/7uGlsZN")
+    
+    @commands.command(hidden=True, aliases=['notpog'])
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def notpoggers(self, ctx):
+        """fig namow ta eert samtsirhc gniworht naM, sponsored by emmo"""
+        await ctx.send("https://imgur.com/UWJXM8j")
+
 def setup(bot):
     bot.add_cog(Memes(bot))
