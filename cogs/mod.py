@@ -9,10 +9,6 @@ class mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
-    def escape_text(self, text):
-        text = str(text)
-        return discord.utils.escape_markdown(discord.utils.escape_mentions(text))
     
     @commands.command(aliases=["clear"])
     @is_admin("Admin")
@@ -27,9 +23,9 @@ class mod(commands.Cog):
 
 
     @commands.command(aliases=["lock"])
-    @commands.has_role(617476156148547619)
+    @is_admin("Admin")
     async def lockdown(self, ctx, channels: commands.Greedy[discord.TextChannel]):
-        """Lock message sending in the channel for everyone. Bot-admin only."""
+        """Lock message sending in the channel for everyone. Admin only."""
         author = ctx.author
         if not channels:
             channels.append(ctx.channel)
@@ -47,7 +43,7 @@ class mod(commands.Cog):
             locked_down.append(c)
 
     @commands.command(aliases=["ulock"])
-    @commands.has_role(617476156148547619)
+    @is_admin("Admin")
     async def unlock(self, ctx, channels: commands.Greedy[discord.TextChannel]):
         """Unlock a locked channel"""
         author = ctx.author
@@ -68,11 +64,8 @@ class mod(commands.Cog):
 
     @commands.guild_only()
     @commands.command(hidden=True)
-    async def userinfo(self, ctx, u: discord.Member or self.bot.fetch_user(int)=None):
+    async def userinfo(self, ctx, u: discord.User=None):
         """Prototype of a new userinfo"""
-
-#        if not self.bot.fetch_user(u):
-#            u = ctx.author
 
         if not ctx.guild.get_member(u.id):
             u = await self.bot.fetch_user(u.id)
@@ -89,7 +82,7 @@ class mod(commands.Cog):
             role = u.top_role.name
           
         embed = discord.Embed(title=f"Userinfo for {u}")
-        embed.description=f"Name = {u.name}\nID = {u.id}\nDiscriminator = {u.discriminator}\nAvatar = {u.avatar}\nBot = {u.bot}\nCreated_at = {u.created_at}\nDisplay_name = {self.escape_text(u.display_name)}\n{f'Joined_at = {u.joined_at}' if guild_member is None else ''}\n{f'Status = {u.status}' if guild_member is None else ''}\n{f'Activity = {u.activity.name if u.activity else None}' if guild_member is None else ''}\nColour = {u.colour}\n{f'Top_role ={self.escape_text(role)}' if role is not None else ''}{f'**Banned**, reason: {ban.reason}' if ban is not None else ''}"
+        embed.description=f"Name = {u.name}\nID = {u.id}\nDiscriminator = {u.discriminator}\nAvatar = {u.avatar}\nBot = {u.bot}\nCreated_at = {u.created_at}\nDisplay_name = {self.bot.escape_text(u.display_name)}\n{f'Joined_at = {u.joined_at}' if guild_member is None else ''}\n{f'Status = {u.status}' if guild_member is None else ''}\n{f'Activity = {u.activity.name if u.activity else None}' if guild_member is None else ''}\nColour = {u.colour}\n{f'Top_role ={self.bot.escape_text(role)}' if role is not None else ''}{f'**Banned**, reason: {ban.reason}' if ban is not None else ''}"
         embed.set_thumbnail(url=u.avatar_url_as(static_format='png'))
         await ctx.send(embed=embed)
 

@@ -22,6 +22,7 @@ class Load(commands.Cog):
             if module[0:7] != "cogs.":
                 module = "cogs." + module
             self.bot.load_extension(module)
+            self.bot.loaded_cogs.append(module.split('.')[-1])
             await ctx.send('✅ Extension loaded.')
         except Exception as e:
             await ctx.send(f'💢 Failed!\n```\n{type(e).__name__}: {e}\n```')

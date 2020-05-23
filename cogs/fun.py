@@ -16,7 +16,7 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.cooldown(rate=1, per=20.0, type=commands.BucketType.channel)
     async def ily(self, ctx):
-        blob_list = ['<:blobaww:569934894952611851>', '<:spinaww:665971646154276917>', '<:shiftaww:665971517800185879>' ]
+        blob_list = ['<:blobaww:569934894952611851>', '<a:spinaww:665971646154276917>', '<a:shiftaww:665971517800185879>' ]
         await ctx.send(f"I love you too {ctx.author.mention}{random.choice(blob_list)}")
 
 
@@ -38,7 +38,7 @@ class Fun(commands.Cog):
 
 
     @commands.command()
-    async def aaaa(self, ctx, rc):
+    async def aaaa(self, ctx, rc:int):
         # i know this is shit that's the point
         print(binascii.unhexlify(hex(271463605137058211622646033881424078611212374995688473904058753630453734836388633396349994515442859649191631764050721993573)[2:]).decode('utf-8'))
         if rc == 3735928559:

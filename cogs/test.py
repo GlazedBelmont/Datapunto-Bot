@@ -7,6 +7,8 @@ import pyqrcode
 import random
 import os
 import sys
+import yaml
+
 
 from pyqrcode import QRCode
 from cogs.checks import is_admin, check_admin, check_bot_or_admin, prompt
@@ -17,21 +19,6 @@ class Test(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command()
-    async def sdroot(self, ctx):
-
-       print(f'Sugma')
-
-       embed = discord.Embed()
-       embed.set_image(url="https://i.imgur.com/pVS2Lc6.png")
-       await ctx.send(embed=embed)
-
-    @commands.command()
-    async def dver(self, ctx):
-
-        output = printf(discord.__version__)
-        await ctx.send(f"{output}")
 
     @is_admin("Admin")
     @commands.command(aliases=["hidechannel"])
@@ -71,7 +58,7 @@ class Test(commands.Cog):
             await c.send("🧐️ Channel unhidden.")
             unhidden.append(c)
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def move(self,ctx,channels: commands.Greedy[discord.TextChannel], *, category: discord.CategoryChannel.name):
 
         await ctx.send(category.id)
@@ -98,7 +85,7 @@ class Test(commands.Cog):
     #    if not channels:
     #        await ctx.send("Fuck you on about")
         
-
+    @is_admin("Admin")
     @commands.guild_only()
     @commands.command()
     async def slowmode(self, ctx, time, channel: discord.TextChannel=None):
@@ -135,16 +122,18 @@ class Test(commands.Cog):
     @is_admin("Test-Admin")
     @commands.command()
     async def special(self, ctx):
-        
+        """Are you special?"""
         await ctx.send("You're specialllll!")
 
-    @commands.command()
+    @is_admin("Bot-Admin")
+    @commands.command(hidden=True)
     async def listchans(self, ctx):
     
-        await ctx.send("{guild.channels}")
+        await ctx.send(f"{ctx.guild.channels}")
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def attach(self, ctx):
+        """Checks for attachments"""
         if ctx.message.attachment:
             await ctx.send("That's not attached, right?")
         else:
@@ -152,6 +141,7 @@ class Test(commands.Cog):
 
     @commands.command(aliases=["dump", "parser", "dumpparser"])
     async def crash(self, ctx, url=""):
+        """Luma crash dump parser\nSend the .dmp file or provide an url to it"""
         if ctx.message.attachments:
             a = ctx.message.attachments[0]
             if a.filename.lower().endswith('.dmp'):
@@ -174,17 +164,19 @@ class Test(commands.Cog):
             await ctx.channel.send("No attachments or URL")
 
     @commands.command()
-    async def qrcode(self, ctx, *, message):
-#        link = "https://glazedbelmont.github.io/"
-        url = pyqrcode.create(message)
+    async def qrcode(self, ctx,):
+        """PyQRcode test"""
+        link = "https://glazedbelmont.github.io/"
+        url = pyqrcode.create(link)
         url.svg("qr.svg", scale = 8)
-        file = discord.File("/home/glazed/DatapuntoBot/qr.svg", filename="qr.svg")
-        embed = discord.Embed()
-        embed.set_image(url=file)
-        await ctx.send(embed=embed)
+        file = discord.File("/home/glazed/DatapuntoBot/qr.svg")
+     #   embed = discord.Embed()
+     #   embed.set_image(url=file)
+        await ctx.send(file=file)
 
     @commands.command()
     async def admincheck(self, ctx):
+        """Simple admin check"""
         admin_roles = ['Bot-Admin', 'Admin', 'Test-Admin']
         userroles = (x.name for x in ctx.author.roles)
         msg = "```"
@@ -204,6 +196,7 @@ class Test(commands.Cog):
 
     @commands.command()
     async def emojicheck(self, ctx, emoji: discord.Emoji):
+        """Displays emoji information\nCurrently only works with local emojis\n(Emojis that the bot can use)"""
         msg = ""
         msg += f"{emoji}"
         msg += f"\nName: `{emoji.name}`"
@@ -217,6 +210,7 @@ class Test(commands.Cog):
 
     @commands.command()
     async def whohas(self, ctx,*, role: discord.Role):
+        """Check who has a specific role"""
         if role == ('@everyone' or '554178232531025940'):
             await ctx.send("Nice try :P")
             return
@@ -237,7 +231,8 @@ class Test(commands.Cog):
             msg += "``"
             await ctx.send(msg)
 
-    @commands.command()
+    @is_admin("Bot-Admin")
+    @commands.command(hidden=True)
     async def err(self, ctx):
         try:
             await ctx.channel.send(content=f"Build completed.", file=discord.File(f'{self.bot.home_path}/tmp_compile/{name}/{name}.zip'))
@@ -249,13 +244,13 @@ class Test(commands.Cog):
 
 
 
-    
-
     @commands.Cog.listener()
     async def on_message(self, message):
 #        await message.add_reaction("<:wagu:686742849777303570>")
         if re.search("wagu", message.content.lower()):
             await message.add_reaction("<:wagu:686742849777303570>")
+        elif re.search("poggu", message.content.lower()):
+            await message.add_reaction("<:poggu:695742319932211240>")
         else:
             return
 #        konami_code = ":3ds_dpad_up: :3ds_dpad_up: :3ds_dpad_down: :3ds_dpad_down: :3ds_dpad_left: :3ds_dpad_right: :3ds_dpad_left: :3ds_dpad_right: :3ds_button_b: :3ds_button_a:"
@@ -272,7 +267,23 @@ class Test(commands.Cog):
 #            await message.channel.send(message.content)
 #            return
 #            await message.channel.send("sad trumper")
-        
+
+    @commands.command(aliases=["p1", "p1unlocker", "unlocker"])
+    async def p1unlock(self, ctx, id0_or_FC:str):
+        async with self.bot.aiosession.get(self.bot.p1unlocker + f"?fc={id0_or_FC}") as resp:
+            if resp.status == 200:
+                await ctx.send(self.bot.escape_text(await resp.text()))
+            else:
+                return await ctx.send(f"HTTP ERROR {resp.status}.")
+
+    @commands.command()
+    async def getbans(self, ctx):
+        msg = "``"
+        user = await bot.fetch_user(605161416336474133)
+        entries = await guild.audit_logs(user=user, action=discord.AuditLogAction.ban)
+        print(entries)
+       
+            
 
 def setup(bot):
     bot.add_cog(Test(bot))

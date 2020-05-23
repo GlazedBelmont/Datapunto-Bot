@@ -16,6 +16,7 @@ class admin(commands.Cog):
     @is_admin("Bot-Admin")
     @commands.command(aliases = ['reboot', 'restart'])
     async def close(self, ctx):
+        """Reboots the bot"""
         await ctx.channel.send("Ah shit, here we go again")
         await self.bot.close()
 
@@ -27,6 +28,7 @@ class admin(commands.Cog):
     @is_admin("GlaZy")
     @commands.command()
     async def guildleave(self, ctx, serverid: int):
+        """Leaves a server"""
         server = self.bot.get_guild(serverid)
         await ctx.send(f"{server}")
 
@@ -49,23 +51,19 @@ class admin(commands.Cog):
             await ctx.send(f"I cannot leave `{server}`\nIt's my home <:blobaww:569934894952611851>")
         
     @commands.command()
-    async def guildtest(self, ctx):
-        msg = "```"
-        for guild in self.bot.guilds:
-            msg += f"{guild}\n"
-        msg += "```"
-        await ctx.send(msg)
-        
-
-    @commands.command()
     async def prompttest(self, ctx):
+        """Self explanatory"""
         if await prompt(self, ctx, "Am I a good bot?"):
             return
         await ctx.send("<:blobaww:569934894952611851>")
 
+    @is_admin("Admin")
     @commands.command(hidden=True)
-    @commands.has_role(627989593454804995)
     async def invite(self, ctx, duration:int=0, uses:int=0, *, reason=""):
+        """Generates an invite link
+            - Duration (int)
+            - Maximum uses (int)
+            - Reason (str)"""
         msg = ""
         if duration == 0:
             duration = 0
@@ -80,10 +78,11 @@ class admin(commands.Cog):
 
         await ctx.send(msg)
 
-
+    @is_admin("Bot-Admin")
     @commands.command(hidden=True)
 #    @commands.has_role(575834911425167414)
     async def give(self, ctx, roles: commands.Greedy[discord.Role], *, users: discord.User):
+        """Gives the specified role to a user(s)"""
         members = []
 
 #        if len(roles) > 1:

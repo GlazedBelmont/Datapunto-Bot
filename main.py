@@ -38,10 +38,25 @@ class Datapunto(commands.Bot):
         self.startup = datetime.now()
         
         self.channels = {
-            'wiiu-assistance-roleplay': None,
             '3ds-assistance-roleplay': None,
+            'best-of-nh': None,
+            'bot-cmds': None,
             'bot-err': None,
             'bot-test': None,
+            'crc': None,
+            'datapunto-bot-suggestions': None,
+            'elsewhere': None,
+            'emoji-dumping': None,
+            'final-fantasy-channel': None,
+            'general-succ': None,
+            'github-updates': None,
+            'lounge-general': None,
+            'meta-roleplay': None,
+            'nh-stupidity': None,
+            'switch-assistance-roleplay': None,
+            'voice-and-music': None,
+            'whiny-bitch-helpons': None,
+            'wiiu-assistance-roleplay': None,
         }
 
         self.admin_roles = {
@@ -63,9 +78,12 @@ class Datapunto(commands.Bot):
         self.Roleplay_channels = {
          self.channels['3ds-assistance-roleplay'],
          self.channels['wiiu-assistance-roleplay'],
+         self.channels['switch-assistance-roleplay'],
         }
+        
         self.home_path = home_path
         self.logs_dir = logs_dir
+        self.p1unlocker = secure['p1unlocker']
 
     @staticmethod
     def escape_text(text):
@@ -147,6 +165,7 @@ def get_names_of_unloaded_cogs():
         if entry.endswith('.py') and os.path.isfile('cogs/{}'.format(entry)) and entry[:-3] not in bot.loaded_cogs:
             bot.unloaded_cogs.append(entry[:-3])
 
+
 check_if_dirs_exist()
 check_if_logs_dir_exist()
 load_autoload_cogs()
@@ -167,7 +186,7 @@ async def list_cogs(ctx):
         await ctx.send(page)
 
 @is_admin("Test-Admin")
-@bot.command()
+@bot.command(hidden=True)
 async def textchannels(ctx):
     channels = (c.name for c in ctx.message.guild.channels if c.type==ChannelType.text)
     msg = "\n".join(channels)
@@ -175,6 +194,7 @@ async def textchannels(ctx):
 
 @bot.command()
 async def about(ctx):
+    """Shows info about the bot"""
     embed = discord.Embed(title="Datapunto Bot")
     embed.set_author(name="GlaZedBelmont", url="https://github.com/GlaZedBelmont")
     embed.description = "The only bot DGC needs!"
@@ -182,8 +202,9 @@ async def about(ctx):
     embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/612447948533399571/e2c1461895d5510057d5ad9fc75d423d.png?size=512")
     await ctx.send(embed=embed)
 
-@bot.command()
+@bot.command(hidden=True)
 async def Kurisu(ctx):
+    """Links to Kurisu"""
     embed = discord.Embed(title="Kurisu")
     embed.set_author(name="Nintendo Homebrew", url="https://github.com/nh-server")
     embed.description = "The original Kurisu, not any type of clone"
@@ -192,17 +213,18 @@ async def Kurisu(ctx):
     await ctx.send(embed=embed)
 
 @bot.command()
-async def roles(ctx):
-    allroles = (c.name for c in ctx.author.roles if c==ctx.author.roles)
-    await ctx.send("\n".join(allroles))
-
-@bot.command()
 async def membercount(ctx):
+    """How many awws do we have in here?"""
     await ctx.send(f'{ctx.guild} has {ctx.guild.member_count:,} members <:blobaww:569934894952611851>')
 
 @bot.command(aliases=["guildcount"])
-async def servercount(self, ctx):
-    await ctx.send(f"{self.bot.guilds}")
+async def servercount(ctx):
+    """Shows the server names that the bot is in"""
+    msg = "```"
+    for guild in bot.guilds:
+        msg += f"{guild}\n"
+    msg += "```"
+    await ctx.send(msg)
 
 
 # Error Handler
@@ -213,6 +235,9 @@ async def on_command_error(ctx, error):
     error = getattr(error, 'original', error)
     
     errorchannel = ctx.guild.get_channel(config['error_channels'][ctx.guild.id])
+    
+    if not errorchannel:
+        errorchannel = ctx.channel
     
     if isinstance(error, ignored):
         return
@@ -259,15 +284,15 @@ async def on_command_error(ctx, error):
     msg = "".join(format_exception(type(error), error, error.__traceback__))
     await errorchannel.send(f"```{msg}```")
     
-@bot.command(name='repeat', aliases=['mimic', 'copy'])
-async def do_repeat(self, ctx, *, inp: str):
-    await ctx.send(inp)
+#@bot.command(name='repeat', aliases=['mimic', 'copy'])
+#async def do_repeat(ctx, *, inp: str):
+#    await ctx.send(inp)
 
-@do_repeat.error
-async def do_repeat_handler(self, ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        if error.param.name == 'inp':
-            await ctx.send("You forgot to give me input to repeat!")
+#@do_repeat.error
+#async def do_repeat_handler(ctx, error):
+#    if isinstance(error, commands.MissingRequiredArgument):
+#        if error.param.name == 'inp':
+#            await ctx.send("You forgot to give me input to repeat!")
             
 
 @bot.event

@@ -96,7 +96,7 @@ class git(commands.Cog):
         if makecommand == "":
             makecommand = "make"
 
-        await ctx.send(f"{builddir} is the building directory\n\n` {url} ` is the github repo's link\n\n{makecommand} is the building command")
+        await ctx.send(f"{self.bot.escape_text(builddir)} is the building directory\n\n` {url} ` is the github repo's link\n\n{self.bot.escape_text(makecommand)} is the building command")
 
         if url[-4:] != ".git":
             name = url.split('/')[-1]
@@ -105,7 +105,7 @@ class git(commands.Cog):
 
         await self.bot.change_presence(status="dnd")
 
-        tmp = await ctx.send(f"**Compiling {name}...**")
+        tmp = await ctx.send(f"**Compiling {self.bot.escape_text(name)}...**")
         git_output = await self.bot.async_call_shell(
             f'rm -r -f tmp_compile && '
             f'mkdir tmp_compile && '
@@ -128,6 +128,44 @@ class git(commands.Cog):
             await ctx.channel.send(content=f"Build completed.", file=discord.File(f'{self.bot.home_path}/tmp_compile/{name}/{name}.zip'))
         except FileNotFoundError:
             await ctx.send(f'`{self.bot.home_path}/tmp_compile/{name}/{name}.zip` does not exist.')
+        finally:
+            await self.bot.change_presence(status="online")
+            cleaning_output = await self.bot.async_call_shell(
+                'rm -r -f tmp_compile'
+            )
+
+
+    @commands.command()
+    async def daedalus(self, ctx, customurl="https://github.com/masterfeizz/DaedalusX64-3DS.git"):
+        """Builds the latest commit of DaedalusX64\nYou can provide your own fork link if it's a custom build"""
+
+        await self.bot.change_presence(status="dnd")
+
+        tmp = await ctx.send(f"**Compiling DaedalusX64...**")
+        git_output = await self.bot.async_call_shell(
+            f'rm -r -f tmp_compile && '
+            f'mkdir tmp_compile && '
+            f'cd tmp_compile && '
+            f'git clone {customurl} && '
+            f'cd $(basename $_ .git) && '
+            f'git submodule init && ' # just in case it's needed
+            f'git submodule update && '
+            f'mv ./Source/SysCTR/Resources/romfs/ ./Source/SysCTR/Resources/RomFS && '
+            f'chmod +x ./build_daedalus.sh && '
+            f'./build_daedalus.sh CTR_RELEASE && '
+        )
+        with open(f"{self.bot.logs_dir}" + "dx643dscompile_log.txt", "a+",encoding="utf-8") as f:
+            print(git_output, sep="\n\n", file=f)
+
+        hasted_output = await self.bot.haste(git_output)
+        await tmp.delete()
+        await ctx.send(f"DaedalusX64's compile log:\n{hasted_output}")
+        
+        try:
+            await ctx.channel.send(content=f"Build completed.", file=discord.File(f'{self.bot.home_path}/tmp_compile/DaedalusX64-3DS/daedbuild/DaedalusX64.3dsx'))
+            await ctx.channel.send(file=discord.File(f'{self.bot.home_path}/tmp_compile/DaedalusX64-3DS/daedbuild/DaedalusX64.cia'))
+        except FileNotFoundError:
+            await ctx.send(f'`{self.bot.home_path}/tmp_compile/DaedalusX64-3DS/DaedalusX64.3dsx & DaedalusX64.cia` do not exist.')
         finally:
             await self.bot.change_presence(status="online")
             cleaning_output = await self.bot.async_call_shell(

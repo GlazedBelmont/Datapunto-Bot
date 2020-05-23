@@ -5,7 +5,7 @@ from discord.ext import commands
 
 admin_roles = {'GlaZy': 0, 'Bot-Admin': 1, 'Admin': 2, 'Test-Admin': 3} # Aight look, I know Kurisu uses that too but it's a good way to check
 
-def is_admin(role):
+def is_admin(role=None):
     async def predicate(ctx):
         if isinstance(ctx.channel, discord.abc.GuildChannel):
             return await check_admin(ctx, role)  if not ctx.author == ctx.guild.owner and ctx.author.id != 308260538637484032 else True
@@ -14,22 +14,25 @@ def is_admin(role):
     return commands.check(predicate)
 
 
-async def check_admin(ctx, role):
-    if {x.name for x in ctx.author.roles} & {item for item in admin_roles}:
-        return True
-    else:
-        return False
-    
 #async def check_admin(ctx, role):
-#    admin_role_check = {x.name for x in ctx.author.roles} & {item for item in admin_roles}
-#    if admin_role_check:
-#        if admin_roles[admin_role_check] >= admin_roles[role]:
-#            return True
-#        else:
-#            pass
+#    if {x.name for x in ctx.author.roles} & {item for item in admin_roles}:
+#        return True
 #    else:
 #        return False
 
+async def check_admin(ctx, role):
+    try:
+        admin_role_check = list({role.name for role in ctx.author.roles} & {x for x in admin_roles})[0] # only returns the first match which will be the highest admin rank the user has
+        if role is None: # global admin check basically
+            return True
+        if admin_roles[admin_role_check] <= admin_roles[role]: # Are you the correct rank
+            return True
+        else:
+            return False
+    except IndexError: # You don't have one of the admin roles
+        return False
+
+    
 
 async def check_bot_or_admin(ctx, role, target: discord.member, action: str):
     if target.bot:

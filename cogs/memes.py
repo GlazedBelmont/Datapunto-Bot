@@ -37,7 +37,7 @@ class Memes(commands.Cog):
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def astar(self, ctx):
         """Here's a star just for you."""
-        await ctx.send(f"{ctx.author.display_name}: https://i.imgur.com/vUrBPZr.png")
+        await ctx.send(f"{self.bot.escape_text(ctx.author.display_name)}: https://i.imgur.com/vUrBPZr.png")
 
     @commands.command(name="bean", hidden=True)
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
@@ -57,7 +57,7 @@ class Memes(commands.Cog):
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
     async def hifumi1(self, ctx):
         """Disappointment"""
-        await ctx.send(f"{ctx.author.display_name}: https://i.imgur.com/jTTHQLs.gifv")
+        await ctx.send(f"{self.bot.escape_text(ctx.author.display_name)}: https://i.imgur.com/jTTHQLs.gifv")
 
     @commands.command(hidden=True)
     @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.channel)
@@ -109,7 +109,7 @@ class Memes(commands.Cog):
         If you fall for this, you should give yourself a solid facepalm."""
         if member is None:
             member = ctx.author
-        org_msg = f"Look out for a Discord user by the name of \"{member.name}\" with"\
+        org_msg = f"Look out for a Discord user by the name of \"{self.bot.escape_text(member.name)}\" with"\
                   f" the tag #{member.discriminator}. "\
                   "He is going around sending friend requests to random Discord users,"\
                   " and those who accept his friend requests will have their accounts "\
@@ -203,7 +203,7 @@ class Memes(commands.Cog):
                 await ctx.send('Timeout')
             else:
                 if x == questions[0]:
-                    msg += f"{m.content} has fallen into"
+                    msg += self.bot.escape_text(f"{m.content} has fallen into")
                     await tmp.delete()
                 else:
                     break
@@ -217,6 +217,18 @@ class Memes(commands.Cog):
     async def lmgtfy(self, ctx, *, howto:str):
         link = 'https://lmgtfy.com/?q=' + (' '.join(howto.split())).replace(' ', '+')
         await ctx.send(self.bot.escape_text(link))
+
+    @commands.command(hidden=True, aliases=['pog'])
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def poggers(self, ctx):
+        """Man throwing christmas tree at woman gif, sponsored by validusername16"""
+        await ctx.send("https://imgur.com/7uGlsZN")
+
+    @commands.command(hidden=True, aliases=['notpog'])
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.channel)
+    async def notpoggers(self, ctx):
+        """fig namow ta eert samtsirhc gniworht naM, sponsored by emmo"""
+        await ctx.send("https://imgur.com/UWJXM8j")
 
 def setup(bot):
     bot.add_cog(Memes(bot))
